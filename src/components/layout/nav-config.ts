@@ -22,6 +22,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Orders", href: "/orders", icon: ShoppingCart, status: "active" },
   { label: "Payments", href: "/payments", icon: Wallet, status: "active" },
   { label: "Expenses", href: "/expenses", icon: Receipt, status: "active" },
-  { label: "Reports", href: "/reports", icon: FileBarChart, status: "soon" },
+  { label: "Reports", href: "/reports", icon: FileBarChart, status: "active" },
   { label: "Settings", href: "/settings", icon: Settings, status: "soon" },
 ]
