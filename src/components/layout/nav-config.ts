@@ -23,5 +23,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Payments", href: "/payments", icon: Wallet, status: "active" },
   { label: "Expenses", href: "/expenses", icon: Receipt, status: "active" },
   { label: "Reports", href: "/reports", icon: FileBarChart, status: "active" },
-  { label: "Settings", href: "/settings", icon: Settings, status: "soon" },
+  { label: "Settings", href: "/settings", icon: Settings, status: "active" },
 ]
