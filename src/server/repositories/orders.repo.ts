@@ -313,3 +313,36 @@ export async function updateOrderStatus(id: string, status: OrderStatus): Promis
 export async function softDeleteOrder(id: string): Promise<void> {
   await query("UPDATE orders SET deleted_at = now() WHERE id = $1", [id])
 }
+
+export interface OrderOption {
+  id: string
+  orderNumber: string
+  customerName: string
+  remainingBalance: string
+}
+
+/** Lightweight list for the payment form's order picker - orders still owed on surface first. */
+export async function listOrdersForSelect(): Promise<OrderOption[]> {
+  const rows = await query<{
+    id: string
+    order_number: string
+    customer_name: string
+    remaining_balance: string
+  }>(
+    `SELECT
+       o.id, o.order_number, c.name AS customer_name,
+       COALESCE(ob.remaining_balance, o.sale_price) AS remaining_balance
+     FROM orders o
+     JOIN customers c ON c.id = o.customer_id
+     LEFT JOIN order_balances ob ON ob.order_id = o.id
+     WHERE o.deleted_at IS NULL
+     ORDER BY remaining_balance DESC, o.order_number DESC`
+  )
+
+  return rows.map((row) => ({
+    id: row.id,
+    orderNumber: row.order_number,
+    customerName: row.customer_name,
+    remainingBalance: row.remaining_balance,
+  }))
+}
