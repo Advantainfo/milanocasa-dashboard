@@ -3,10 +3,16 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat("it-IT", {
   currency: "EUR",
 })
 
+// Pinned explicitly (rather than relying on the server process's local
+// timezone) so dates render the same regardless of which region the app is
+// deployed to.
+const DISPLAY_TIME_ZONE = "Europe/Rome"
+
 const DATE_FORMATTER = new Intl.DateTimeFormat("it-IT", {
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
+  timeZone: DISPLAY_TIME_ZONE,
 })
 
 const DATE_TIME_FORMATTER = new Intl.DateTimeFormat("it-IT", {
@@ -15,6 +21,7 @@ const DATE_TIME_FORMATTER = new Intl.DateTimeFormat("it-IT", {
   year: "numeric",
   hour: "2-digit",
   minute: "2-digit",
+  timeZone: DISPLAY_TIME_ZONE,
 })
 
 const NUMBER_FORMATTER = new Intl.NumberFormat("it-IT")
@@ -33,13 +40,4 @@ export function formatDateTime(value: string | Date): string {
 
 export function formatNumber(value: number | string): string {
   return NUMBER_FORMATTER.format(Number(value))
-}
-
-/** Formats a Date as `YYYY-MM-DD` for date-only Postgres columns / <input type="date">. */
-export function toDateInputValue(value: string | Date): string {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
 }

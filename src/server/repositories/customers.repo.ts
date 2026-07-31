@@ -273,3 +273,16 @@ export async function updateCustomer(id: string, input: CustomerInput): Promise<
 export async function softDeleteCustomer(id: string): Promise<void> {
   await query("UPDATE customers SET deleted_at = now() WHERE id = $1", [id])
 }
+
+export interface CustomerOption {
+  id: string
+  name: string
+  company: string | null
+}
+
+/** Lightweight list for client-side pickers (order form's customer combobox). */
+export async function listAllCustomersForSelect(): Promise<CustomerOption[]> {
+  return query<CustomerOption>(
+    "SELECT id, name, company FROM customers WHERE deleted_at IS NULL ORDER BY name ASC"
+  )
+}

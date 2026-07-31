@@ -1,6 +1,22 @@
 import "server-only"
 
-import { Pool, type PoolClient, type QueryResultRow } from "@neondatabase/serverless"
+import {
+  Pool,
+  types,
+  type PoolClient,
+  type QueryResultRow,
+} from "@neondatabase/serverless"
+
+/**
+ * Postgres `date` columns have no time-of-day or timezone. The driver's
+ * default parser builds a JS `Date` from local-midnight, which silently
+ * shifts a calendar day backward or forward once that value is read in a
+ * different timezone than the one that parsed it (e.g. a Vercel function in
+ * UTC vs. a browser in Italy) - exactly the kind of bug that would show a
+ * furniture delivery on the wrong day. Returning the raw "YYYY-MM-DD" string
+ * instead keeps it timezone-independent everywhere.
+ */
+types.setTypeParser(types.builtins.DATE, (value) => value)
 
 /**
  * Cached on `globalThis` so dev-mode HMR / Turbopack module reloads reuse the

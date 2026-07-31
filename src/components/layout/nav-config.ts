@@ -19,7 +19,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, status: "active" },
   { label: "Customers", href: "/customers", icon: Users, status: "active" },
-  { label: "Orders", href: "/orders", icon: ShoppingCart, status: "soon" },
+  { label: "Orders", href: "/orders", icon: ShoppingCart, status: "active" },
   { label: "Payments", href: "/payments", icon: Wallet, status: "soon" },
   { label: "Expenses", href: "/expenses", icon: Receipt, status: "soon" },
   { label: "Reports", href: "/reports", icon: FileBarChart, status: "soon" },
