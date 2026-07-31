@@ -16,14 +16,16 @@ import {
 } from "@/components/ui/chart"
 import { formatCurrency } from "@/lib/format"
 
-// Diverging pair from the validated dataviz palette (blue <-> red), used here
-// for polarity (above/below the zero baseline) rather than series identity.
+// Money-terminal green/red pair for polarity (above/below the zero
+// baseline), re-validated with the dataviz skill's script against these
+// exact surfaces - see revenue-expenses-chart.tsx for the same pair used
+// as a categorical series identity there.
 const POSITIVE_COLOR = "var(--color-positive)"
 const NEGATIVE_COLOR = "var(--color-negative)"
 
 const chartConfig = {
-  positive: { label: "Positive", theme: { light: "#2a78d6", dark: "#3987e5" } },
-  negative: { label: "Negative", theme: { light: "#e34948", dark: "#e66767" } },
+  positive: { label: "Positive", theme: { light: "#00703d", dark: "#00994d" } },
+  negative: { label: "Negative", theme: { light: "#c81e3a", dark: "#ff2d55" } },
 } satisfies ChartConfig
 
 interface DivergingBarChartProps {

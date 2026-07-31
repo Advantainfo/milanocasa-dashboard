@@ -19,16 +19,18 @@ import {
 import { formatCurrency } from "@/lib/format"
 import type { MonthlyFinancials } from "@/server/repositories/dashboard.repo"
 
-// Categorical slots 1 (blue) and 2 (orange) from the validated dataviz palette -
-// adjacent pair, passes CVD separation in both light and dark.
+// Money-terminal green/red pair, re-validated with the dataviz skill's
+// script against these exact surfaces after the redesign (a naive vivid
+// green/red reads great to normal vision but fails deuteranopia
+// separation - these specific steps clear the CVD floor in both modes).
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    theme: { light: "#2a78d6", dark: "#3987e5" },
+    theme: { light: "#00703d", dark: "#00994d" },
   },
   expenses: {
     label: "Expenses",
-    theme: { light: "#eb6834", dark: "#d95926" },
+    theme: { light: "#c81e3a", dark: "#ff2d55" },
   },
 } satisfies ChartConfig
 

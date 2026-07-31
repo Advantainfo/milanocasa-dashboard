@@ -23,10 +23,15 @@ export function SidebarNav({ layoutId, onNavigate }: SidebarNavProps) {
   return (
     <>
       <div className="mb-8 flex items-center gap-2 px-2">
-        <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg text-sm font-bold">
+        <div className="bg-primary text-primary-foreground glow-primary flex size-8 items-center justify-center rounded-lg text-sm font-bold">
           M
         </div>
-        <span className="text-base font-semibold tracking-tight">Milano Casa</span>
+        <span className="text-base font-semibold tracking-tight">
+          Milano Casa
+          <span className="text-primary text-glow-primary animate-pulse motion-reduce:animate-none">
+            _
+          </span>
+        </span>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -65,7 +70,7 @@ export function SidebarNav({ layoutId, onNavigate }: SidebarNavProps) {
               {active && (
                 <motion.span
                   layoutId={layoutId}
-                  className="bg-sidebar-accent absolute inset-0 rounded-lg"
+                  className="bg-sidebar-accent ring-primary/40 absolute inset-0 rounded-lg shadow-[0_0_16px_-4px_var(--primary)] ring-1"
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
                 />
               )}

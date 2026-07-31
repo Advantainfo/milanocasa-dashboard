@@ -15,7 +15,22 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="from-background to-muted/40 flex min-h-svh items-center justify-center bg-gradient-to-b p-6">
+    <main className="bg-background relative flex min-h-svh items-center justify-center overflow-hidden p-6">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 50% 35%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 60%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "linear-gradient(color-mix(in oklch, var(--primary) 60%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklch, var(--primary) 60%, transparent) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
       <LoginForm />
     </main>
   )

@@ -26,9 +26,9 @@ export function LoginForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <Card className="w-full max-w-sm border-white/10 shadow-2xl">
+      <Card className="glow-primary-lg relative z-10 w-full max-w-sm">
         <CardHeader className="space-y-1 text-center">
-          <div className="bg-primary text-primary-foreground mx-auto mb-2 flex size-10 items-center justify-center rounded-xl text-base font-bold">
+          <div className="bg-primary text-primary-foreground glow-primary mx-auto mb-2 flex size-10 items-center justify-center rounded-xl text-base font-bold">
             M
           </div>
           <CardTitle className="text-2xl font-semibold tracking-tight">
