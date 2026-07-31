@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { NAV_ITEMS } from "@/components/layout/nav-config"
+import { LogoMark } from "@/components/brand/logo-mark"
 
 function isItemActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -23,8 +24,8 @@ export function SidebarNav({ layoutId, onNavigate }: SidebarNavProps) {
   return (
     <>
       <div className="mb-8 flex items-center gap-2 px-2">
-        <div className="bg-primary text-primary-foreground glow-primary flex size-8 items-center justify-center rounded-lg text-sm font-bold">
-          M
+        <div className="bg-primary/10 ring-primary/40 glow-primary text-primary flex size-8 items-center justify-center rounded-lg ring-1">
+          <LogoMark className="size-5" />
         </div>
         <span className="text-base font-semibold tracking-tight">
           Milano Casa

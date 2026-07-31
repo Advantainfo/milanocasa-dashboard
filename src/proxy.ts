@@ -26,5 +26,7 @@ export async function proxy(request: NextRequest) {
 // cheap on every navigation. Every dashboard layout/page and API route also
 // re-verifies the session server-side — see src/lib/auth/dal.ts.
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|apple-icon.png|.*\\.(?:png|svg|jpg|jpeg|webp|ico)$).*)",
+  ],
 }

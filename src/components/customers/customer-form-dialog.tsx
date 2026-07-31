@@ -154,7 +154,9 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="vatNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>VAT number</FormLabel>
+                    <FormLabel>
+                      VAT number <span className="text-muted-foreground">(optional)</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -167,7 +169,9 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      Email <span className="text-muted-foreground">(optional)</span>
+                    </FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
                     </FormControl>

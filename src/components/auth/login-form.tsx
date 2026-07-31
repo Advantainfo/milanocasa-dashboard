@@ -4,6 +4,7 @@ import { useActionState } from "react"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
 import { login, type LoginFormState } from "@/server/actions/auth"
+import { LogoMark } from "@/components/brand/logo-mark"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -28,8 +29,8 @@ export function LoginForm() {
     >
       <Card className="glow-primary-lg relative z-10 w-full max-w-sm">
         <CardHeader className="space-y-1 text-center">
-          <div className="bg-primary text-primary-foreground glow-primary mx-auto mb-2 flex size-10 items-center justify-center rounded-xl text-base font-bold">
-            M
+          <div className="bg-primary/10 ring-primary/40 glow-primary text-primary mx-auto mb-2 flex size-12 items-center justify-center rounded-xl ring-1">
+            <LogoMark className="size-7" />
           </div>
           <CardTitle className="text-2xl font-semibold tracking-tight">
             Milano Casa
