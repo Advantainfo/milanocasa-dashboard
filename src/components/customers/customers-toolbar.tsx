@@ -1,0 +1,33 @@
+"use client"
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { SearchInput } from "@/components/shared/search-input"
+import { CustomerFormDialog } from "@/components/customers/customer-form-dialog"
+
+export function CustomersToolbar({ defaultSearch }: { defaultSearch: string }) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  function handleSearch(value: string) {
+    const params = new URLSearchParams(searchParams.toString())
+    if (value) {
+      params.set("search", value)
+    } else {
+      params.delete("search")
+    }
+    params.set("page", "1")
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <SearchInput
+        defaultValue={defaultSearch}
+        placeholder="Search customers…"
+        onSearch={handleSearch}
+      />
+      <CustomerFormDialog mode="create" />
+    </div>
+  )
+}
