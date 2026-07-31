@@ -1,7 +1,10 @@
+import type { Metadata } from "next"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { decryptSession, SESSION_COOKIE_NAME } from "@/lib/auth/session"
 import { LoginForm } from "@/components/auth/login-form"
+
+export const metadata: Metadata = { title: "Sign in | Milano Casa" }
 
 export default async function LoginPage() {
   const cookieStore = await cookies()

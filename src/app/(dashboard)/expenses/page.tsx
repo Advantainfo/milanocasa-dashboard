@@ -1,8 +1,11 @@
+import type { Metadata } from "next"
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants"
 import { listExpenses, type ExpenseSortColumn } from "@/server/repositories/expenses.repo"
 import { EXPENSE_CATEGORIES, type ExpenseCategory } from "@/types/database"
 import { ExpensesTable } from "@/components/expenses/expenses-table"
 import { ExpensesToolbar } from "@/components/expenses/expenses-toolbar"
+
+export const metadata: Metadata = { title: "Expenses | Milano Casa" }
 
 const SORT_COLUMNS: ExpenseSortColumn[] = [
   "expenseDate",

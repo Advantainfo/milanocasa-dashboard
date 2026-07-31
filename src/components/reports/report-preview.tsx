@@ -45,7 +45,7 @@ export function ReportPreview({ data }: { data: ReportData }) {
           {orders.length === 0 ? (
             <p className="text-muted-foreground text-sm">No orders in this period.</p>
           ) : (
-            <div className="overflow-hidden rounded-lg border">
+            <div className="overflow-x-auto rounded-lg border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -91,7 +91,7 @@ export function ReportPreview({ data }: { data: ReportData }) {
             {expenses.length === 0 ? (
               <p className="text-muted-foreground text-sm">No expenses in this period.</p>
             ) : (
-              <div className="overflow-hidden rounded-lg border">
+              <div className="overflow-x-auto rounded-lg border">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -127,7 +127,7 @@ export function ReportPreview({ data }: { data: ReportData }) {
             {payments.length === 0 ? (
               <p className="text-muted-foreground text-sm">No payments in this period.</p>
             ) : (
-              <div className="overflow-hidden rounded-lg border">
+              <div className="overflow-x-auto rounded-lg border">
                 <Table>
                   <TableHeader>
                     <TableRow>

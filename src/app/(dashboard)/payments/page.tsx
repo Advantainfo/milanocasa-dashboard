@@ -1,9 +1,12 @@
+import type { Metadata } from "next"
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants"
 import { listOrdersForSelect } from "@/server/repositories/orders.repo"
 import { listPayments, type PaymentSortColumn } from "@/server/repositories/payments.repo"
 import { PAYMENT_METHODS, type PaymentMethod } from "@/types/database"
 import { PaymentsTable } from "@/components/payments/payments-table"
 import { PaymentsToolbar } from "@/components/payments/payments-toolbar"
+
+export const metadata: Metadata = { title: "Payments | Milano Casa" }
 
 const SORT_COLUMNS: PaymentSortColumn[] = [
   "paymentDate",

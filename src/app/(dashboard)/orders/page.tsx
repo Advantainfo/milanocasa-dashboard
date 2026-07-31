@@ -1,9 +1,12 @@
+import type { Metadata } from "next"
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants"
 import { listAllCustomersForSelect } from "@/server/repositories/customers.repo"
 import { listOrders, type OrderSortColumn } from "@/server/repositories/orders.repo"
 import { ORDER_STATUSES, type OrderStatus } from "@/types/database"
 import { OrdersTable } from "@/components/orders/orders-table"
 import { OrdersToolbar } from "@/components/orders/orders-toolbar"
+
+export const metadata: Metadata = { title: "Orders | Milano Casa" }
 
 const SORT_COLUMNS: OrderSortColumn[] = [
   "orderNumber",

@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants"
 import {
   listCustomers,
@@ -5,6 +6,8 @@ import {
 } from "@/server/repositories/customers.repo"
 import { CustomersTable } from "@/components/customers/customers-table"
 import { CustomersToolbar } from "@/components/customers/customers-toolbar"
+
+export const metadata: Metadata = { title: "Customers | Milano Casa" }
 
 const SORT_COLUMNS: CustomerSortColumn[] = [
   "name",

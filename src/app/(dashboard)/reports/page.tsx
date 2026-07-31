@@ -1,7 +1,10 @@
+import type { Metadata } from "next"
 import { resolveReportPeriod, type ReportType } from "@/lib/report-period"
 import { getReportData } from "@/server/repositories/reports.repo"
 import { ReportsToolbar } from "@/components/reports/reports-toolbar"
 import { ReportPreview } from "@/components/reports/report-preview"
+
+export const metadata: Metadata = { title: "Reports | Milano Casa" }
 
 interface ReportsPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>

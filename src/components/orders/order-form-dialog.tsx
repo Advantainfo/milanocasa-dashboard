@@ -187,7 +187,7 @@ export function OrderFormDialog({
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <FormField
                 control={form.control}
                 name="quantity"
@@ -253,7 +253,7 @@ export function OrderFormDialog({
               )}
             />
             {mode === "create" && (
-              <div className="grid grid-cols-2 gap-4 rounded-lg border p-3">
+              <div className="grid grid-cols-1 gap-4 rounded-lg border p-3 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="depositAmount"

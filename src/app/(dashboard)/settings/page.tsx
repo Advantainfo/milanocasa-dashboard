@@ -1,6 +1,9 @@
+import type { Metadata } from "next"
 import { getCompanySettings } from "@/server/repositories/settings.repo"
 import { CompanySettingsForm } from "@/components/settings/company-settings-form"
 import { ChangePasswordForm } from "@/components/settings/change-password-form"
+
+export const metadata: Metadata = { title: "Settings | Milano Casa" }
 
 export default async function SettingsPage() {
   const settings = await getCompanySettings()
