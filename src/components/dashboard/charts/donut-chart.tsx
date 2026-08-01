@@ -7,6 +7,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { formatCurrency, formatNumber } from "@/lib/format"
 
 export interface DonutSlice {
   key: string
@@ -20,8 +21,15 @@ interface DonutChartProps {
   data: DonutSlice[]
   centerLabel?: string
   centerValue?: string
-  valueFormatter?: (value: number) => string
+  /** Serializable format kind - server components can't pass formatter
+   *  functions to this client component, so tooltip values are resolved here. */
+  format?: "currency" | "number"
   height?: number
+}
+
+const FORMATTERS: Record<NonNullable<DonutChartProps["format"]>, (value: number) => string> = {
+  currency: formatCurrency,
+  number: (n) => formatNumber(Math.round(n)),
 }
 
 /** Generic donut chart with a centered total label and a compact legend, reused for
@@ -30,9 +38,10 @@ export function DonutChart({
   data,
   centerLabel,
   centerValue,
-  valueFormatter = (n) => n.toLocaleString(),
+  format = "number",
   height = 200,
 }: DonutChartProps) {
+  const valueFormatter = FORMATTERS[format]
   const chartConfig = data.reduce<ChartConfig>((config, slice) => {
     config[slice.key] = { label: slice.label, color: slice.color }
     return config

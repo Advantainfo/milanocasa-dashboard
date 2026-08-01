@@ -11,10 +11,8 @@ import { formatCurrency } from "@/lib/format"
 import { useDictionary } from "@/lib/i18n/dictionary-provider"
 import { DashboardSection } from "@/components/dashboard/dashboard-section"
 
-// Money-terminal green/red pair for polarity (above/below the zero
-// baseline), re-validated with the dataviz skill's script against these
-// exact surfaces - see area-trend-chart.tsx for the same pair used
-// as a categorical series identity there.
+// Success/destructive pair for polarity (above/below the zero baseline),
+// sourced from the centralized theme tokens in globals.css.
 const POSITIVE_COLOR = "var(--color-positive)"
 const NEGATIVE_COLOR = "var(--color-negative)"
 
@@ -38,11 +36,11 @@ export function DivergingBarChart({
   const chartConfig = {
     positive: {
       label: dict.dashboard.charts.positive,
-      theme: { light: "#00703d", dark: "#00994d" },
+      color: "var(--success)",
     },
     negative: {
       label: dict.dashboard.charts.negative,
-      theme: { light: "#c81e3a", dark: "#ff2d55" },
+      color: "var(--destructive)",
     },
   } satisfies ChartConfig
 

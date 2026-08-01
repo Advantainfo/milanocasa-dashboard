@@ -118,7 +118,7 @@ export function OrdersTable({
       cell: ({ row }) => {
         const value = Number(row.original.remainingBalance)
         return (
-          <span className={value > 0 ? "text-amber-600 dark:text-amber-500" : undefined}>
+          <span className={value > 0 ? "text-warning" : undefined}>
             {formatCurrency(value)}
           </span>
         )

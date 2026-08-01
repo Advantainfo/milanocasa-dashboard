@@ -80,7 +80,7 @@ export function OrderCombobox({ orders, value, onChange, disabled }: OrderCombob
                       className={cn(
                         "text-xs whitespace-nowrap",
                         Number(order.remainingBalance) > 0
-                          ? "text-amber-600 dark:text-amber-500"
+                          ? "text-warning"
                           : "text-muted-foreground"
                       )}
                     >

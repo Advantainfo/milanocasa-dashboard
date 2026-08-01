@@ -123,18 +123,20 @@ export default async function DashboardPage() {
           <KpiCard
             label={dict.dashboard.kpi.totalRevenue}
             value={totalRevenue}
-            formatValue={formatCurrency}
+            format="currency"
             hint={dict.dashboard.kpi.allTime}
-            icon={TrendingUp}
+            icon={<TrendingUp className="size-4" />}
+            color="var(--kpi-revenue)"
           />
         </StaggerItem>
         <StaggerItem>
           <KpiCard
             label={dict.dashboard.kpi.netProfit}
             value={Number(kpis.netProfitThisMonth)}
-            formatValue={formatCurrency}
+            format="currency"
             hint={dict.dashboard.kpi.thisMonth}
-            icon={BadgeEuro}
+            icon={<BadgeEuro className="size-4" />}
+            color="var(--kpi-profit)"
             tone={Number(kpis.netProfitThisMonth) < 0 ? "amber" : "default"}
             trend={profitTrend}
           />
@@ -143,8 +145,9 @@ export default async function DashboardPage() {
           <KpiCard
             label={dict.dashboard.kpi.outstandingPayments}
             value={outstanding}
-            formatValue={formatCurrency}
-            icon={Wallet}
+            format="currency"
+            icon={<Wallet className="size-4" />}
+            color="var(--kpi-outstanding)"
             tone={outstanding > 0 ? "amber" : "default"}
           />
         </StaggerItem>
@@ -152,23 +155,26 @@ export default async function DashboardPage() {
           <KpiCard
             label={dict.dashboard.kpi.orders}
             value={kpis.totalOrders}
-            icon={ShoppingCart}
+            icon={<ShoppingCart className="size-4" />}
+            color="var(--kpi-orders)"
           />
         </StaggerItem>
         <StaggerItem>
           <KpiCard
             label={dict.dashboard.kpi.customers}
             value={kpis.totalCustomers}
-            icon={Users}
+            icon={<Users className="size-4" />}
+            color="var(--kpi-customers)"
           />
         </StaggerItem>
         <StaggerItem>
           <KpiCard
             label={dict.dashboard.kpi.expenses}
             value={Number(kpis.expensesThisMonth)}
-            formatValue={formatCurrency}
+            format="currency"
             hint={dict.dashboard.kpi.thisMonth}
-            icon={Banknote}
+            icon={<Banknote className="size-4" />}
+            color="var(--kpi-expenses)"
             trend={expensesTrend}
           />
         </StaggerItem>
@@ -176,16 +182,18 @@ export default async function DashboardPage() {
           <KpiCard
             label={dict.dashboard.kpi.pendingDeliveries}
             value={kpis.pendingDeliveries}
-            icon={Truck}
+            icon={<Truck className="size-4" />}
+            color="var(--kpi-pending-delivery)"
           />
         </StaggerItem>
         <StaggerItem>
           <KpiCard
             label={dict.dashboard.charts.cashFlowTitle}
             value={Number(lastMonth.cashFlow)}
-            formatValue={formatCurrency}
+            format="currency"
             hint={dict.dashboard.kpi.thisMonth}
-            icon={ArrowLeftRight}
+            icon={<ArrowLeftRight className="size-4" />}
+            color="var(--kpi-cash-flow)"
             tone={Number(lastMonth.cashFlow) < 0 ? "amber" : "default"}
             trend={cashFlowTrend}
           />
@@ -210,7 +218,7 @@ export default async function DashboardPage() {
                 height={180}
                 centerValue={formatCurrency(totalRevenue)}
                 centerLabel={dict.dashboard.kpi.totalRevenue}
-                valueFormatter={formatCurrency}
+                format="currency"
                 data={[
                   {
                     key: "collected",
@@ -222,7 +230,7 @@ export default async function DashboardPage() {
                     key: "outstanding",
                     label: dict.dashboard.widgets.outstanding,
                     value: outstanding,
-                    color: "#f59e0b",
+                    color: "var(--warning)",
                   },
                 ]}
               />

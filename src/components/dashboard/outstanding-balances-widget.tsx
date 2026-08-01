@@ -26,11 +26,11 @@ export async function OutstandingBalancesWidget({
             key={balance.orderId}
             href={`/orders/${balance.orderId}`}
             icon={CircleAlert}
-            iconClassName="bg-amber-500/10 text-amber-600 ring-amber-500/25 dark:text-amber-400"
+            iconClassName="bg-warning/10 text-warning ring-warning/25"
             title={balance.customerName}
             subtitle={balance.orderNumber}
             trailing={
-              <span className="font-medium text-amber-600 dark:text-amber-500">
+              <span className="text-warning font-medium">
                 {formatCurrency(balance.remainingBalance)}
               </span>
             }

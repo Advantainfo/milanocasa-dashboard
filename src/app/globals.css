@@ -46,16 +46,37 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Centralized semantic + KPI-category color tokens (see :root/.dark below
+     for values). Every place in the app that needs one of these colors
+     should reference the Tailwind utility these generate (e.g. `text-success`,
+     `bg-warning/15`, `text-(--kpi-orders)`) rather than a literal hex/Tailwind
+     palette color, so the whole app can be retinted from this one file. */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-violet: var(--violet);
+  --color-cyan: var(--cyan);
+  --color-muted-subtle: var(--muted-subtle);
+  --color-kpi-revenue: var(--kpi-revenue);
+  --color-kpi-profit: var(--kpi-profit);
+  --color-kpi-outstanding: var(--kpi-outstanding);
+  --color-kpi-expenses: var(--kpi-expenses);
+  --color-kpi-orders: var(--kpi-orders);
+  --color-kpi-customers: var(--kpi-customers);
+  --color-kpi-pending-delivery: var(--kpi-pending-delivery);
+  --color-kpi-cash-flow: var(--kpi-cash-flow);
 }
 
 /*
- * "Money-green terminal" theme. Dark is the primary/default surface (a
- * Bloomberg-terminal-at-night feel); light is a complementary "day terminal"
- * so toggling never looks broken. The chart greens/reds are deliberately
- * DIFFERENT (more muted) than the UI accent green - the accent is a single
- * brand color (no CVD constraint), the chart pair had to be re-picked and
- * validated with the dataviz skill's script (see conversation) because a
- * naive vivid-green/red pair fails deuteranopia separation.
+ * Centralized color system. Every color used anywhere in the app should
+ * trace back to a token defined here - components reference the generated
+ * Tailwind utilities (`bg-card`, `text-warning`, `ring-(--kpi-orders)`, etc.)
+ * instead of hardcoded hex values or literal Tailwind palette colors
+ * (`bg-amber-500`, `#2563eb`, ...). Dark is the primary/default surface;
+ * light is a complementary palette so toggling never looks broken. The
+ * `success`/`warning`/`violet`/`cyan` and `kpi-*` accents are shared
+ * verbatim between themes (they're already saturated enough to read on
+ * both), only backgrounds/surfaces/borders differ per theme.
  */
 
 :root {
@@ -65,66 +86,96 @@
   --card-foreground: #06170d;
   --popover: #ffffff;
   --popover-foreground: #06170d;
-  --primary: #00703d;
-  --primary-foreground: #f3fff6;
+  --primary: #2563eb;
+  --primary-foreground: #f8fafc;
   --secondary: #e6f2ea;
   --secondary-foreground: #06170d;
   --muted: #e9f1ec;
   --muted-foreground: #4d6b5a;
+  --muted-subtle: #64748b;
   --accent: #e6f2ea;
   --accent-foreground: #06170d;
-  --destructive: #c81e3a;
+  --destructive: #ef4444;
   --border: #cfe3d6;
   --input: #cfe3d6;
-  --ring: #00703d;
-  --chart-1: #00703d;
-  --chart-2: #c81e3a;
-  --chart-3: #4d6b5a;
-  --chart-4: #7fa694;
-  --chart-5: #cfe3d6;
+  --ring: #2563eb;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --violet: #8b5cf6;
+  --cyan: #06b6d4;
+  --chart-1: var(--success);
+  --chart-2: var(--destructive);
+  --chart-3: var(--muted-foreground);
+  --chart-4: var(--muted-subtle);
+  --chart-5: var(--border);
   --radius: 0.625rem;
   --sidebar: #eef5f0;
   --sidebar-foreground: #06170d;
-  --sidebar-primary: #00703d;
-  --sidebar-primary-foreground: #f3fff6;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #f8fafc;
   --sidebar-accent: #dcefe3;
   --sidebar-accent-foreground: #06170d;
   --sidebar-border: #cfe3d6;
-  --sidebar-ring: #00703d;
+  --sidebar-ring: #2563eb;
+
+  /* KPI-category accents - identical across themes; see @theme mapping above. */
+  --kpi-revenue: var(--success);
+  --kpi-profit: #10b981;
+  --kpi-outstanding: var(--warning);
+  --kpi-expenses: var(--destructive);
+  --kpi-orders: #3b82f6;
+  --kpi-customers: var(--violet);
+  --kpi-pending-delivery: #fbbf24;
+  --kpi-cash-flow: var(--cyan);
 }
 
 .dark {
-  --background: #05070a;
-  --foreground: #eaf7ee;
-  --card: #0a0f0c;
-  --card-foreground: #eaf7ee;
-  --popover: #0a0f0c;
-  --popover-foreground: #eaf7ee;
-  --primary: #00ff66;
-  --primary-foreground: #04140a;
-  --secondary: #10231a;
-  --secondary-foreground: #eaf7ee;
-  --muted: #0d1512;
-  --muted-foreground: #7fa694;
-  --accent: #10231a;
-  --accent-foreground: #eaf7ee;
-  --destructive: #ff2d55;
-  --border: rgba(0, 255, 102, 0.16);
-  --input: rgba(0, 255, 102, 0.16);
-  --ring: #00ff66;
-  --chart-1: #00994d;
-  --chart-2: #ff2d55;
-  --chart-3: #00ff66;
-  --chart-4: #7fa694;
-  --chart-5: #10231a;
-  --sidebar: #060908;
-  --sidebar-foreground: #eaf7ee;
-  --sidebar-primary: #00ff66;
-  --sidebar-primary-foreground: #04140a;
-  --sidebar-accent: rgba(0, 255, 102, 0.14);
-  --sidebar-accent-foreground: #eaf7ee;
-  --sidebar-border: rgba(0, 255, 102, 0.16);
-  --sidebar-ring: #00ff66;
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+  --primary: #2563eb;
+  --primary-foreground: #f8fafc;
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --muted-subtle: #64748b;
+  --accent: #334155;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --border: #374151;
+  --input: #374151;
+  --ring: #2563eb;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --violet: #8b5cf6;
+  --cyan: #06b6d4;
+  --chart-1: var(--success);
+  --chart-2: var(--destructive);
+  --chart-3: var(--muted-foreground);
+  --chart-4: var(--muted-subtle);
+  --chart-5: var(--border);
+  --sidebar: #111827;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #374151;
+  --sidebar-ring: #2563eb;
+
+  /* KPI-category accents - identical across themes; see @theme mapping above. */
+  --kpi-revenue: var(--success);
+  --kpi-profit: #10b981;
+  --kpi-outstanding: var(--warning);
+  --kpi-expenses: var(--destructive);
+  --kpi-orders: #3b82f6;
+  --kpi-customers: var(--violet);
+  --kpi-pending-delivery: #fbbf24;
+  --kpi-cash-flow: var(--cyan);
 }
 
 @layer base {
@@ -186,5 +237,11 @@
   }
   .text-glow-destructive {
     text-shadow: 0 0 18px color-mix(in oklch, var(--destructive) 55%, transparent);
+  }
+  .text-glow-success {
+    text-shadow: 0 0 18px color-mix(in oklch, var(--success) 55%, transparent);
+  }
+  .text-glow-warning {
+    text-shadow: 0 0 18px color-mix(in oklch, var(--warning) 55%, transparent);
   }
 }

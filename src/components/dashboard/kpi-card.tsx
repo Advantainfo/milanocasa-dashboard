@@ -3,8 +3,10 @@
 import type { LucideIcon } from "lucide-react"
 import { Minus, TrendingDown, TrendingUp } from "lucide-react"
 import { motion } from "framer-motion"
+import type { CSSProperties, ReactNode } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { formatCurrency, formatNumber } from "@/lib/format"
 import { AnimatedNumber } from "@/components/dashboard/animated-number"
 
 export interface KpiTrend {
@@ -15,29 +17,44 @@ export interface KpiTrend {
 interface KpiCardProps {
   label: string
   value: number
-  formatValue?: (value: number) => string
+  /** Serializable format kind - server components can't pass formatter
+   *  functions to this client component, so the value is resolved here. */
+  format?: "currency" | "number"
   hint?: string
-  icon: LucideIcon
+  /** Pass a rendered icon element (e.g. `<TrendingUp className="size-4" />`),
+   *  not a component reference - server components can't pass component
+   *  references to this client component either, only rendered elements. */
+  icon: ReactNode
+  /** CSS color value for the icon chip, e.g. "var(--kpi-revenue)". Defaults
+   *  to the app's primary accent. */
+  color?: string
   tone?: "default" | "amber"
   trend?: KpiTrend
 }
 
+const FORMATTERS: Record<NonNullable<KpiCardProps["format"]>, (value: number) => string> = {
+  currency: formatCurrency,
+  number: (n) => formatNumber(Math.round(n)),
+}
+
 const TREND_STYLES: Record<KpiTrend["direction"], { icon: LucideIcon; className: string }> = {
-  up: { icon: TrendingUp, className: "text-emerald-600 dark:text-emerald-400" },
-  down: { icon: TrendingDown, className: "text-amber-600 dark:text-amber-400" },
+  up: { icon: TrendingUp, className: "text-success" },
+  down: { icon: TrendingDown, className: "text-warning" },
   flat: { icon: Minus, className: "text-muted-foreground" },
 }
 
 export function KpiCard({
   label,
   value,
-  formatValue = (n) => String(Math.round(n)),
+  format = "number",
   hint,
-  icon: Icon,
+  icon,
+  color = "var(--primary)",
   tone = "default",
   trend,
 }: KpiCardProps) {
   const TrendIcon = trend ? TREND_STYLES[trend.direction].icon : null
+  const formatValue = FORMATTERS[format]
 
   return (
     <motion.div
@@ -51,8 +68,11 @@ export function KpiCard({
             <p className="text-muted-foreground min-w-0 text-xs font-medium tracking-wide uppercase">
               {label}
             </p>
-            <div className="bg-primary/10 text-primary ring-primary/30 flex size-9 shrink-0 items-center justify-center rounded-lg ring-1">
-              <Icon className="size-4" />
+            <div
+              className="bg-(--kpi-color)/10 text-(--kpi-color) ring-(--kpi-color)/30 flex size-9 shrink-0 items-center justify-center rounded-lg ring-1"
+              style={{ "--kpi-color": color } as CSSProperties}
+            >
+              {icon}
             </div>
           </div>
 
@@ -62,9 +82,7 @@ export function KpiCard({
               formatFn={formatValue}
               className={cn(
                 "block truncate font-mono text-2xl font-semibold tracking-tight tabular-nums",
-                tone === "amber"
-                  ? "text-amber-500 [text-shadow:0_0_18px_rgba(245,158,11,0.5)]"
-                  : "text-glow-primary"
+                tone === "amber" ? "text-warning text-glow-warning" : "text-glow-primary"
               )}
             />
             <div className="flex items-center gap-2">

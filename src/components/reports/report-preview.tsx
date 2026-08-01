@@ -198,7 +198,7 @@ function SummaryCard({
         <p
           className={
             tone === "amber"
-              ? "text-2xl font-semibold tracking-tight text-amber-600 dark:text-amber-500"
+              ? "text-2xl font-semibold tracking-tight text-warning"
               : "text-2xl font-semibold tracking-tight"
           }
         >

@@ -122,7 +122,7 @@ export function CustomersTable({
       cell: ({ row }) => {
         const value = Number(row.original.outstandingBalance)
         return (
-          <span className={value > 0 ? "text-amber-600 dark:text-amber-500" : undefined}>
+          <span className={value > 0 ? "text-warning" : undefined}>
             {formatCurrency(value)}
           </span>
         )

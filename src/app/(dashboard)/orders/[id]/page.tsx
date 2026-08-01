@@ -98,7 +98,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           <CardContent
             className={
               Number(order.remainingBalance) > 0
-                ? "text-2xl font-semibold text-amber-600 dark:text-amber-500"
+                ? "text-2xl font-semibold text-warning"
                 : "text-2xl font-semibold"
             }
           >
