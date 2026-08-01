@@ -7,17 +7,20 @@ import { PaymentFormDialog } from "@/components/payments/payment-form-dialog"
 import { ExpenseFormDialog } from "@/components/expenses/expense-form-dialog"
 import type { CustomerOption } from "@/server/repositories/customers.repo"
 import type { OrderOption } from "@/server/repositories/orders.repo"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
 
 interface QuickActionsProps {
   customers: CustomerOption[]
   orders: OrderOption[]
 }
 
-export function QuickActions({ customers, orders }: QuickActionsProps) {
+export async function QuickActions({ customers, orders }: QuickActionsProps) {
+  const { dictionary: dict } = await getServerDictionary()
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Quick Actions</CardTitle>
+        <CardTitle className="text-base">{dict.dashboard.quickActions.title}</CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <CustomerFormDialog
@@ -25,7 +28,7 @@ export function QuickActions({ customers, orders }: QuickActionsProps) {
           trigger={
             <Button variant="outline" className="h-auto flex-col gap-2 py-4">
               <UserPlus className="size-5" />
-              Add Customer
+              {dict.dashboard.quickActions.addCustomer}
             </Button>
           }
         />
@@ -35,7 +38,7 @@ export function QuickActions({ customers, orders }: QuickActionsProps) {
           trigger={
             <Button variant="outline" className="h-auto flex-col gap-2 py-4">
               <ShoppingCart className="size-5" />
-              New Order
+              {dict.dashboard.quickActions.newOrder}
             </Button>
           }
         />
@@ -45,7 +48,7 @@ export function QuickActions({ customers, orders }: QuickActionsProps) {
           trigger={
             <Button variant="outline" className="h-auto flex-col gap-2 py-4">
               <Wallet className="size-5" />
-              Record Payment
+              {dict.dashboard.quickActions.recordPayment}
             </Button>
           }
         />
@@ -54,7 +57,7 @@ export function QuickActions({ customers, orders }: QuickActionsProps) {
           trigger={
             <Button variant="outline" className="h-auto flex-col gap-2 py-4">
               <Receipt className="size-5" />
-              Add Expense
+              {dict.dashboard.quickActions.addExpense}
             </Button>
           }
         />

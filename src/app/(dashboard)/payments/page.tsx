@@ -5,6 +5,7 @@ import { listPayments, type PaymentSortColumn } from "@/server/repositories/paym
 import { PAYMENT_METHODS, type PaymentMethod } from "@/types/database"
 import { PaymentsTable } from "@/components/payments/payments-table"
 import { PaymentsToolbar } from "@/components/payments/payments-toolbar"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
 
 export const metadata: Metadata = { title: "Payments | Milano Casa" }
 
@@ -20,6 +21,7 @@ interface PaymentsPageProps {
 }
 
 export default async function PaymentsPage({ searchParams }: PaymentsPageProps) {
+  const { dictionary: dict } = await getServerDictionary()
   const params = await searchParams
   const search = typeof params.search === "string" ? params.search : ""
   const methodParam = typeof params.method === "string" ? params.method : ""
@@ -41,10 +43,8 @@ export default async function PaymentsPage({ searchParams }: PaymentsPageProps) 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Payments</h2>
-        <p className="text-muted-foreground text-sm">
-          Every payment received, with remaining balances updated automatically.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight">{dict.payments.title}</h2>
+        <p className="text-muted-foreground text-sm">{dict.payments.subtitle}</p>
       </div>
       <PaymentsToolbar
         defaultSearch={search}

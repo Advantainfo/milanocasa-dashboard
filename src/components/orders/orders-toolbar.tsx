@@ -9,10 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ORDER_STATUS_LABELS } from "@/lib/constants"
 import { ORDER_STATUSES } from "@/types/database"
 import type { CustomerOption } from "@/server/repositories/customers.repo"
 import { OrderFormDialog } from "@/components/orders/order-form-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface OrdersToolbarProps {
   defaultSearch: string
@@ -30,6 +30,7 @@ export function OrdersToolbar({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -47,7 +48,7 @@ export function OrdersToolbar({
       <div className="flex flex-wrap items-center gap-3">
         <SearchInput
           defaultValue={defaultSearch}
-          placeholder="Search orders…"
+          placeholder={dict.orders.searchPlaceholder}
           onSearch={(value) => updateParam("search", value)}
         />
         <Select
@@ -55,13 +56,13 @@ export function OrdersToolbar({
           onValueChange={(value) => updateParam("status", value)}
         >
           <SelectTrigger className="w-[170px]">
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder={dict.orders.allStatuses} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_STATUSES_VALUE}>All statuses</SelectItem>
+            <SelectItem value={ALL_STATUSES_VALUE}>{dict.orders.allStatuses}</SelectItem>
             {ORDER_STATUSES.map((status) => (
               <SelectItem key={status} value={status}>
-                {ORDER_STATUS_LABELS[status]}
+                {dict.statuses.order[status]}
               </SelectItem>
             ))}
           </SelectContent>

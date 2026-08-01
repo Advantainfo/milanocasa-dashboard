@@ -17,6 +17,8 @@ import type { CustomerOption } from "@/server/repositories/customers.repo"
 import { OrderFormDialog } from "@/components/orders/order-form-dialog"
 import { OrderStatusSelect } from "@/components/orders/order-status-select"
 import { DeleteOrderDialog } from "@/components/orders/delete-order-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface OrdersTableProps {
   items: OrderListItem[]
@@ -40,6 +42,7 @@ export function OrdersTable({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function pushParams(next: Record<string, string | number>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -61,7 +64,7 @@ export function OrdersTable({
   const columns: ColumnDef<OrderListItem, unknown>[] = [
     {
       accessorKey: "orderNumber",
-      header: "Order",
+      header: dict.orders.columns.order,
       meta: { sortKey: "orderNumber" },
       cell: ({ row }) => (
         <Link
@@ -74,7 +77,7 @@ export function OrdersTable({
     },
     {
       accessorKey: "customerName",
-      header: "Customer",
+      header: dict.orders.columns.customer,
       meta: { sortKey: "customerName" },
       cell: ({ row }) => (
         <Link href={`/customers/${row.original.customerId}`} className="hover:underline">
@@ -84,7 +87,7 @@ export function OrdersTable({
     },
     {
       id: "furniture",
-      header: "Furniture",
+      header: dict.orders.columns.furniture,
       cell: ({ row }) => (
         <div className="max-w-[220px] truncate" title={row.original.furnitureDescription}>
           {row.original.furnitureDescription}
@@ -96,7 +99,7 @@ export function OrdersTable({
     },
     {
       accessorKey: "salePrice",
-      header: "Sale Price",
+      header: dict.orders.columns.salePrice,
       meta: {
         sortKey: "salePrice",
         headerClassName: "text-right",
@@ -106,7 +109,7 @@ export function OrdersTable({
     },
     {
       accessorKey: "remainingBalance",
-      header: "Balance",
+      header: dict.orders.columns.balance,
       meta: {
         sortKey: "remainingBalance",
         headerClassName: "text-right",
@@ -123,7 +126,7 @@ export function OrdersTable({
     },
     {
       accessorKey: "deliveryDate",
-      header: "Delivery",
+      header: dict.orders.columns.delivery,
       meta: { sortKey: "deliveryDate" },
       cell: ({ row }) =>
         row.original.deliveryDate ? (
@@ -134,7 +137,7 @@ export function OrdersTable({
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: dict.orders.columns.status,
       meta: { sortKey: "status" },
       cell: ({ row }) => (
         <OrderStatusSelect orderId={row.original.id} status={row.original.status} />
@@ -154,7 +157,10 @@ export function OrdersTable({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={`Edit order ${row.original.orderNumber}`}
+                aria-label={formatMessage(dict.common.actionOn, {
+                  action: dict.common.edit,
+                  name: row.original.orderNumber,
+                })}
               >
                 <Pencil className="size-4" />
               </Button>
@@ -176,7 +182,7 @@ export function OrdersTable({
         data={items}
         sort={sort}
         onSortChange={handleSortChange}
-        emptyMessage="No orders yet. Create your first order to get started."
+        emptyMessage={dict.orders.emptyState}
       />
       <Pagination
         page={page}

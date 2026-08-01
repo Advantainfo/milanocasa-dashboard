@@ -8,8 +8,8 @@ import { Plus } from "lucide-react"
 import { paymentFieldsSchema, type PaymentFieldsInput } from "@/lib/validation/payments"
 import { createPaymentAction, updatePaymentAction } from "@/server/actions/payments"
 import { PAYMENT_METHODS, type PaymentMethod } from "@/types/database"
-import { PAYMENT_METHOD_LABELS } from "@/lib/constants"
 import type { OrderOption } from "@/server/repositories/orders.repo"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -64,6 +64,7 @@ export function PaymentFormDialog({
 }: PaymentFormDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   const form = useForm<PaymentFieldsInput>({
     resolver: zodResolver(paymentFieldsSchema),
@@ -104,7 +105,7 @@ export function PaymentFormDialog({
         return
       }
 
-      toast.success(mode === "edit" ? "Payment updated." : "Payment recorded.")
+      toast.success(mode === "edit" ? dict.payments.updated : dict.payments.recorded)
       setOpen(false)
       form.reset()
     })
@@ -122,19 +123,17 @@ export function PaymentFormDialog({
         {trigger ?? (
           <Button>
             <Plus className="size-4" />
-            Record payment
+            {dict.payments.recordPayment}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {mode === "edit" ? "Edit payment" : "Record a payment"}
+            {mode === "edit" ? dict.payments.editPayment : dict.payments.recordPayment}
           </DialogTitle>
           <DialogDescription>
-            {mode === "edit"
-              ? "Update this payment's details."
-              : "Log a payment received against an order."}
+            {mode === "edit" ? dict.payments.editDescription : dict.payments.recordDescription}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -144,7 +143,7 @@ export function PaymentFormDialog({
               name="orderId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Order</FormLabel>
+                  <FormLabel>{dict.payments.order}</FormLabel>
                   <FormControl>
                     <OrderCombobox
                       orders={orders}
@@ -162,7 +161,7 @@ export function PaymentFormDialog({
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount (€)</FormLabel>
+                    <FormLabel>{dict.payments.amount}</FormLabel>
                     <FormControl>
                       <Input type="number" min={0} step="0.01" {...field} />
                     </FormControl>
@@ -175,7 +174,7 @@ export function PaymentFormDialog({
                 name="paymentDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel>{dict.payments.date}</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -190,7 +189,7 @@ export function PaymentFormDialog({
                 name="method"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Method</FormLabel>
+                    <FormLabel>{dict.payments.method}</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -200,7 +199,7 @@ export function PaymentFormDialog({
                       <SelectContent>
                         {PAYMENT_METHODS.map((method) => (
                           <SelectItem key={method} value={method}>
-                            {PAYMENT_METHOD_LABELS[method]}
+                            {dict.statuses.paymentMethod[method]}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -214,9 +213,9 @@ export function PaymentFormDialog({
                 name="reference"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Reference</FormLabel>
+                    <FormLabel>{dict.payments.reference}</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. transfer ref." {...field} />
+                      <Input placeholder={dict.payments.referencePlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,7 +227,7 @@ export function PaymentFormDialog({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>{dict.common.notes}</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -239,10 +238,10 @@ export function PaymentFormDialog({
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
                 {isPending
-                  ? "Saving…"
+                  ? dict.common.saving
                   : mode === "edit"
-                    ? "Save changes"
-                    : "Record payment"}
+                    ? dict.common.saveChanges
+                    : dict.payments.recordPayment}
               </Button>
             </DialogFooter>
           </form>

@@ -23,9 +23,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 export function ChangePasswordForm() {
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   const form = useForm<ChangePasswordInput>({
     resolver: zodResolver(changePasswordSchema),
@@ -58,7 +60,7 @@ export function ChangePasswordForm() {
         return
       }
 
-      toast.success("Password changed.")
+      toast.success(dict.settings.security.changed)
       form.reset()
     })
   }
@@ -66,8 +68,8 @@ export function ChangePasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Security</CardTitle>
-        <CardDescription>Change the password used to sign in.</CardDescription>
+        <CardTitle className="text-base">{dict.settings.security.title}</CardTitle>
+        <CardDescription>{dict.settings.security.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -77,7 +79,7 @@ export function ChangePasswordForm() {
               name="currentPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current password</FormLabel>
+                  <FormLabel>{dict.settings.security.currentPassword}</FormLabel>
                   <FormControl>
                     <Input type="password" autoComplete="current-password" {...field} />
                   </FormControl>
@@ -90,7 +92,7 @@ export function ChangePasswordForm() {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New password</FormLabel>
+                  <FormLabel>{dict.settings.security.newPassword}</FormLabel>
                   <FormControl>
                     <Input type="password" autoComplete="new-password" {...field} />
                   </FormControl>
@@ -103,7 +105,7 @@ export function ChangePasswordForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm new password</FormLabel>
+                  <FormLabel>{dict.settings.security.confirmPassword}</FormLabel>
                   <FormControl>
                     <Input type="password" autoComplete="new-password" {...field} />
                   </FormControl>
@@ -112,7 +114,7 @@ export function ChangePasswordForm() {
               )}
             />
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Saving…" : "Change password"}
+              {isPending ? dict.common.saving : dict.settings.security.changePassword}
             </Button>
           </form>
         </Form>

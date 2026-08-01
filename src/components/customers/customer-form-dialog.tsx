@@ -27,6 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 export interface CustomerEditableRecord {
   id: string
@@ -48,6 +49,7 @@ interface CustomerFormDialogProps {
 export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   const form = useForm<CustomerInput>({
     resolver: zodResolver(customerSchema),
@@ -89,7 +91,7 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
         return
       }
 
-      toast.success(mode === "edit" ? "Customer updated." : "Customer added.")
+      toast.success(mode === "edit" ? dict.customers.updated : dict.customers.added)
       setOpen(false)
       form.reset()
     })
@@ -107,17 +109,17 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
         {trigger ?? (
           <Button>
             <Plus className="size-4" />
-            Add customer
+            {dict.customers.addCustomer}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{mode === "edit" ? "Edit customer" : "Add customer"}</DialogTitle>
+          <DialogTitle>
+            {mode === "edit" ? dict.customers.editCustomer : dict.customers.addCustomer}
+          </DialogTitle>
           <DialogDescription>
-            {mode === "edit"
-              ? "Update this customer's details."
-              : "Add a new customer to your business."}
+            {mode === "edit" ? dict.customers.editDescription : dict.customers.addDescription}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -128,7 +130,7 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="name"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{dict.customers.name}</FormLabel>
                     <FormControl>
                       <Input {...field} autoFocus />
                     </FormControl>
@@ -141,7 +143,7 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="company"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company</FormLabel>
+                    <FormLabel>{dict.customers.company}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -155,7 +157,8 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      VAT number <span className="text-muted-foreground">(optional)</span>
+                      {dict.customers.vatNumber}{" "}
+                      <span className="text-muted-foreground">({dict.common.optional})</span>
                     </FormLabel>
                     <FormControl>
                       <Input {...field} />
@@ -170,7 +173,8 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Email <span className="text-muted-foreground">(optional)</span>
+                      {dict.customers.email}{" "}
+                      <span className="text-muted-foreground">({dict.common.optional})</span>
                     </FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
@@ -184,7 +188,7 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>{dict.customers.phone}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -197,7 +201,7 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="address"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>{dict.customers.address}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -210,7 +214,7 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
                 name="notes"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <FormLabel>Notes</FormLabel>
+                    <FormLabel>{dict.common.notes}</FormLabel>
                     <FormControl>
                       <Textarea rows={3} {...field} />
                     </FormControl>
@@ -222,10 +226,10 @@ export function CustomerFormDialog({ mode, customer, trigger }: CustomerFormDial
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
                 {isPending
-                  ? "Saving…"
+                  ? dict.common.saving
                   : mode === "edit"
-                    ? "Save changes"
-                    : "Add customer"}
+                    ? dict.common.saveChanges
+                    : dict.customers.addCustomer}
               </Button>
             </DialogFooter>
           </form>

@@ -1,41 +1,52 @@
-import Link from "next/link"
+import { CircleAlert } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ActivityRow } from "@/components/dashboard/activity-row"
 import { formatCurrency } from "@/lib/format"
 import type { OutstandingBalance } from "@/server/repositories/dashboard.repo"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
 
-export function OutstandingBalancesWidget({
-  balances,
-}: {
+interface OutstandingBalancesWidgetProps {
   balances: OutstandingBalance[]
-}) {
+  bare?: boolean
+}
+
+export async function OutstandingBalancesWidget({
+  balances,
+  bare = false,
+}: OutstandingBalancesWidgetProps) {
+  const { dictionary: dict } = await getServerDictionary()
+
+  const list =
+    balances.length === 0 ? (
+      <p className="text-muted-foreground text-sm">{dict.dashboard.widgets.everyonePaidUp}</p>
+    ) : (
+      <div className="divide-y">
+        {balances.map((balance) => (
+          <ActivityRow
+            key={balance.orderId}
+            href={`/orders/${balance.orderId}`}
+            icon={CircleAlert}
+            iconClassName="bg-amber-500/10 text-amber-600 ring-amber-500/25 dark:text-amber-400"
+            title={balance.customerName}
+            subtitle={balance.orderNumber}
+            trailing={
+              <span className="font-medium text-amber-600 dark:text-amber-500">
+                {formatCurrency(balance.remainingBalance)}
+              </span>
+            }
+          />
+        ))}
+      </div>
+    )
+
+  if (bare) return list
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Outstanding Balances</CardTitle>
+        <CardTitle className="text-base">{dict.dashboard.widgets.outstandingBalances}</CardTitle>
       </CardHeader>
-      <CardContent>
-        {balances.length === 0 ? (
-          <p className="text-muted-foreground text-sm">Everyone is paid up.</p>
-        ) : (
-          <div className="divide-y">
-            {balances.map((balance) => (
-              <Link
-                key={balance.orderId}
-                href={`/orders/${balance.orderId}`}
-                className="hover:bg-muted/50 -mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 text-sm transition-colors"
-              >
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{balance.customerName}</p>
-                  <p className="text-muted-foreground truncate">{balance.orderNumber}</p>
-                </div>
-                <span className="shrink-0 font-medium text-amber-600 dark:text-amber-500">
-                  {formatCurrency(balance.remainingBalance)}
-                </span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </CardContent>
+      <CardContent>{list}</CardContent>
     </Card>
   )
 }

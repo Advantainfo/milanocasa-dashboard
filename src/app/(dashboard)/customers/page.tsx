@@ -6,6 +6,7 @@ import {
 } from "@/server/repositories/customers.repo"
 import { CustomersTable } from "@/components/customers/customers-table"
 import { CustomersToolbar } from "@/components/customers/customers-toolbar"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
 
 export const metadata: Metadata = { title: "Customers | Milano Casa" }
 
@@ -22,6 +23,7 @@ interface CustomersPageProps {
 }
 
 export default async function CustomersPage({ searchParams }: CustomersPageProps) {
+  const { dictionary: dict } = await getServerDictionary()
   const params = await searchParams
   const search = typeof params.search === "string" ? params.search : ""
   const page = Math.max(1, Number(params.page) || 1)
@@ -42,10 +44,8 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Customers</h2>
-        <p className="text-muted-foreground text-sm">
-          Manage your customer relationships and track their activity.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight">{dict.customers.title}</h2>
+        <p className="text-muted-foreground text-sm">{dict.customers.subtitle}</p>
       </div>
       <CustomersToolbar defaultSearch={search} />
       <CustomersTable

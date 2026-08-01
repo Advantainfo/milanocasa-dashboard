@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { NAV_ITEMS } from "@/components/layout/nav-config"
 import { LogoMark } from "@/components/brand/logo-mark"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 function isItemActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -20,6 +21,7 @@ interface SidebarNavProps {
 
 export function SidebarNav({ layoutId, onNavigate }: SidebarNavProps) {
   const pathname = usePathname()
+  const dict = useDictionary()
 
   return (
     <>
@@ -46,9 +48,9 @@ export function SidebarNav({ layoutId, onNavigate }: SidebarNavProps) {
                 className="text-sidebar-foreground/40 flex items-center gap-3 rounded-lg px-3 py-2 text-sm"
               >
                 <Icon className="size-4" />
-                <span className="flex-1">{item.label}</span>
+                <span className="flex-1">{dict.nav[item.key]}</span>
                 <span className="text-[10px] font-medium tracking-wide uppercase">
-                  Soon
+                  {dict.nav.soon}
                 </span>
               </div>
             )
@@ -76,7 +78,7 @@ export function SidebarNav({ layoutId, onNavigate }: SidebarNavProps) {
                 />
               )}
               <Icon className="relative size-4" />
-              <span className="relative">{item.label}</span>
+              <span className="relative">{dict.nav[item.key]}</span>
             </Link>
           )
         })}

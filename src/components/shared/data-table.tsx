@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,8 +45,9 @@ export function DataTable<TData>({
   data,
   sort,
   onSortChange,
-  emptyMessage = "No results.",
+  emptyMessage,
 }: DataTableProps<TData>) {
+  const dict = useDictionary()
   const table = useReactTable({
     data,
     columns,
@@ -115,7 +117,7 @@ export function DataTable<TData>({
                 colSpan={columns.length}
                 className="text-muted-foreground h-32 text-center"
               >
-                {emptyMessage}
+                {emptyMessage ?? dict.common.noResults}
               </TableCell>
             </TableRow>
           )}

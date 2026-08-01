@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import type { OrderOption } from "@/server/repositories/orders.repo"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface OrderComboboxProps {
   orders: OrderOption[]
@@ -26,6 +27,7 @@ interface OrderComboboxProps {
 export function OrderCombobox({ orders, value, onChange, disabled }: OrderComboboxProps) {
   const [open, setOpen] = useState(false)
   const selected = orders.find((order) => order.id === value)
+  const dict = useDictionary()
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -41,16 +43,16 @@ export function OrderCombobox({ orders, value, onChange, disabled }: OrderCombob
           <span className="truncate">
             {selected
               ? `${selected.orderNumber} — ${selected.customerName}`
-              : "Select an order…"}
+              : dict.payments.selectOrder}
           </span>
           <ChevronsUpDown className="text-muted-foreground ml-2 size-4 shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
-          <CommandInput placeholder="Search orders…" />
+          <CommandInput placeholder={dict.payments.searchOrders} />
           <CommandList>
-            <CommandEmpty>No order found.</CommandEmpty>
+            <CommandEmpty>{dict.payments.noOrderFound}</CommandEmpty>
             <CommandGroup>
               {orders.map((order) => (
                 <CommandItem
@@ -83,8 +85,8 @@ export function OrderCombobox({ orders, value, onChange, disabled }: OrderCombob
                       )}
                     >
                       {Number(order.remainingBalance) > 0
-                        ? `${formatCurrency(order.remainingBalance)} due`
-                        : "Paid"}
+                        ? `${formatCurrency(order.remainingBalance)} ${dict.payments.due}`
+                        : dict.payments.paid}
                     </span>
                   </div>
                 </CommandItem>

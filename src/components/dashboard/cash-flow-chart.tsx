@@ -3,21 +3,22 @@
 import { formatCurrency } from "@/lib/format"
 import type { MonthlyFinancials } from "@/server/repositories/dashboard.repo"
 import { useDictionary } from "@/lib/i18n/dictionary-provider"
-import { formatMessage } from "@/lib/i18n/format-message"
 import { DashboardSection } from "@/components/dashboard/dashboard-section"
 import { AreaTrendChart } from "@/components/dashboard/charts/area-trend-chart"
 
-interface RevenueExpensesChartProps {
+interface CashFlowChartProps {
   data: MonthlyFinancials[]
 }
 
-export function RevenueExpensesChart({ data }: RevenueExpensesChartProps) {
+/** Cash actually received vs. expenses actually paid, per month - a different lens
+ *  than the invoiced revenue/expenses chart above it. */
+export function CashFlowChart({ data }: CashFlowChartProps) {
   const dict = useDictionary()
 
   return (
     <DashboardSection
-      title={dict.dashboard.charts.revenueExpensesTitle}
-      description={formatMessage(dict.dashboard.charts.lastNMonths, { n: data.length })}
+      title={dict.dashboard.charts.cashFlowTitle}
+      description={dict.dashboard.charts.cashFlowDescription}
       className="h-full"
     >
       <AreaTrendChart
@@ -27,8 +28,8 @@ export function RevenueExpensesChart({ data }: RevenueExpensesChartProps) {
         valueFormatter={formatCurrency}
         series={[
           {
-            key: "revenue",
-            label: dict.dashboard.charts.revenue,
+            key: "cashIn",
+            label: dict.reports.summary.paymentsReceived,
             color: "var(--chart-1)",
           },
           {

@@ -9,9 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants"
 import { EXPENSE_CATEGORIES } from "@/types/database"
 import { ExpenseFormDialog } from "@/components/expenses/expense-form-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface ExpensesToolbarProps {
   defaultSearch: string
@@ -27,6 +27,7 @@ export function ExpensesToolbar({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -44,7 +45,7 @@ export function ExpensesToolbar({
       <div className="flex flex-wrap items-center gap-3">
         <SearchInput
           defaultValue={defaultSearch}
-          placeholder="Search expenses…"
+          placeholder={dict.expenses.searchPlaceholder}
           onSearch={(value) => updateParam("search", value)}
         />
         <Select
@@ -52,13 +53,13 @@ export function ExpensesToolbar({
           onValueChange={(value) => updateParam("category", value)}
         >
           <SelectTrigger className="w-[170px]">
-            <SelectValue placeholder="All categories" />
+            <SelectValue placeholder={dict.expenses.allCategories} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_CATEGORIES_VALUE}>All categories</SelectItem>
+            <SelectItem value={ALL_CATEGORIES_VALUE}>{dict.expenses.allCategories}</SelectItem>
             {EXPENSE_CATEGORIES.map((category) => (
               <SelectItem key={category} value={category}>
-                {EXPENSE_CATEGORY_LABELS[category]}
+                {dict.statuses.expenseCategory[category]}
               </SelectItem>
             ))}
           </SelectContent>

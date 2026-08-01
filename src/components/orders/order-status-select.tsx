@@ -4,7 +4,7 @@ import { useTransition } from "react"
 import { toast } from "sonner"
 import { updateOrderStatusAction } from "@/server/actions/orders"
 import { ORDER_STATUSES, type OrderStatus } from "@/types/database"
-import { ORDER_STATUS_LABELS } from "@/lib/constants"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 import {
   Select,
   SelectContent,
@@ -20,14 +20,15 @@ interface OrderStatusSelectProps {
 
 export function OrderStatusSelect({ orderId, status }: OrderStatusSelectProps) {
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   function handleChange(nextStatus: string) {
     startTransition(async () => {
       try {
         await updateOrderStatusAction(orderId, nextStatus)
-        toast.success("Status updated.")
+        toast.success(dict.orders.statusUpdated)
       } catch {
-        toast.error("Couldn't update status.")
+        toast.error(dict.orders.statusUpdateFailed)
       }
     })
   }
@@ -40,7 +41,7 @@ export function OrderStatusSelect({ orderId, status }: OrderStatusSelectProps) {
       <SelectContent>
         {ORDER_STATUSES.map((value) => (
           <SelectItem key={value} value={value}>
-            {ORDER_STATUS_LABELS[value]}
+            {dict.statuses.order[value]}
           </SelectItem>
         ))}
       </SelectContent>

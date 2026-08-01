@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface DeleteExpenseDialogProps {
   expenseId: string
@@ -24,11 +25,12 @@ interface DeleteExpenseDialogProps {
 export function DeleteExpenseDialog({ expenseId }: DeleteExpenseDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   function handleDelete() {
     startTransition(async () => {
       await deleteExpenseAction(expenseId)
-      toast.success("Expense deleted.")
+      toast.success(dict.expenses.deleted)
       setOpen(false)
     })
   }
@@ -36,22 +38,23 @@ export function DeleteExpenseDialog({ expenseId }: DeleteExpenseDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Delete expense">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={`${dict.common.delete} ${dict.expenses.title}`}
+        >
           <Trash2 className="size-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this expense?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This removes the expense from your active records. It stays in the database
-            for your history.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{dict.expenses.deleteTitle}</AlertDialogTitle>
+          <AlertDialogDescription>{dict.expenses.deleteDescription}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{dict.common.cancel}</AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete} disabled={isPending}>
-            {isPending ? "Deleting…" : "Delete"}
+            {isPending ? dict.common.deleting : dict.common.delete}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

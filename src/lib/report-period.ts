@@ -8,7 +8,7 @@ export interface ResolvedReportPeriod {
   label: string
 }
 
-const MONTH_LABELS = [
+export const DEFAULT_MONTH_LABELS = [
   "January",
   "February",
   "March",
@@ -38,14 +38,17 @@ export interface ReportPeriodInput {
   month?: number
   start?: string
   end?: string
+  monthLabels?: readonly string[]
 }
 
 export function resolveReportPeriod(input: ReportPeriodInput): ResolvedReportPeriod {
+  const monthLabels = input.monthLabels ?? DEFAULT_MONTH_LABELS
+
   if (input.type === "monthly") {
     const month = input.month && input.month >= 1 && input.month <= 12 ? input.month : 1
     const start = `${input.year}-${pad(month)}-01`
     const end = `${input.year}-${pad(month)}-${pad(daysInMonth(input.year, month))}`
-    return { start, end, label: `${MONTH_LABELS[month - 1]} ${input.year}` }
+    return { start, end, label: `${monthLabels[month - 1]} ${input.year}` }
   }
 
   if (input.type === "yearly") {

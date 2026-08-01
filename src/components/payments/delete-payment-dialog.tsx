@@ -16,6 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface DeletePaymentDialogProps {
   paymentId: string
@@ -30,11 +32,12 @@ export function DeletePaymentDialog({
 }: DeletePaymentDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   function handleDelete() {
     startTransition(async () => {
       await deletePaymentAction(paymentId, orderId)
-      toast.success("Payment deleted.")
+      toast.success(dict.payments.deleted)
       setOpen(false)
     })
   }
@@ -42,22 +45,28 @@ export function DeletePaymentDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Delete payment">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={formatMessage(dict.common.actionOn, {
+            action: dict.common.delete,
+            name: orderNumber,
+          })}
+        >
           <Trash2 className="size-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this payment?</AlertDialogTitle>
+          <AlertDialogTitle>{dict.payments.deleteTitle}</AlertDialogTitle>
           <AlertDialogDescription>
-            This removes the payment from order {orderNumber} and increases its remaining
-            balance accordingly.
+            {formatMessage(dict.payments.deleteDescription, { orderNumber })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{dict.common.cancel}</AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete} disabled={isPending}>
-            {isPending ? "Deleting…" : "Delete"}
+            {isPending ? dict.common.deleting : dict.common.delete}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

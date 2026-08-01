@@ -7,7 +7,6 @@ import { DataTable, type SortState } from "@/components/shared/data-table"
 import { Pagination } from "@/components/shared/pagination"
 import { Button } from "@/components/ui/button"
 import { formatCurrency, formatDate } from "@/lib/format"
-import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants"
 import type {
   ExpenseListItem,
   ExpenseSortColumn,
@@ -15,6 +14,8 @@ import type {
 } from "@/server/repositories/expenses.repo"
 import { ExpenseFormDialog } from "@/components/expenses/expense-form-dialog"
 import { DeleteExpenseDialog } from "@/components/expenses/delete-expense-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface ExpensesTableProps {
   items: ExpenseListItem[]
@@ -36,6 +37,7 @@ export function ExpensesTable({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function pushParams(next: Record<string, string | number>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -57,32 +59,32 @@ export function ExpensesTable({
   const columns: ColumnDef<ExpenseListItem, unknown>[] = [
     {
       accessorKey: "expenseDate",
-      header: "Date",
+      header: dict.expenses.columns.date,
       meta: { sortKey: "expenseDate" },
       cell: ({ row }) => formatDate(row.original.expenseDate),
     },
     {
       accessorKey: "category",
-      header: "Category",
+      header: dict.expenses.columns.category,
       meta: { sortKey: "category" },
-      cell: ({ row }) => EXPENSE_CATEGORY_LABELS[row.original.category],
+      cell: ({ row }) => dict.statuses.expenseCategory[row.original.category],
     },
     {
       accessorKey: "supplier",
-      header: "Supplier",
+      header: dict.expenses.columns.supplier,
       meta: { sortKey: "supplier" },
       cell: ({ row }) =>
         row.original.supplier || <span className="text-muted-foreground">—</span>,
     },
     {
       id: "invoiceNumber",
-      header: "Invoice",
+      header: dict.expenses.columns.invoice,
       cell: ({ row }) =>
         row.original.invoiceNumber || <span className="text-muted-foreground">—</span>,
     },
     {
       accessorKey: "amount",
-      header: "Amount",
+      header: dict.expenses.columns.amount,
       meta: {
         sortKey: "amount",
         headerClassName: "text-right",
@@ -102,7 +104,14 @@ export function ExpensesTable({
             mode="edit"
             expense={row.original}
             trigger={
-              <Button variant="ghost" size="icon" aria-label="Edit expense">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={formatMessage(dict.common.actionOn, {
+                  action: dict.common.edit,
+                  name: dict.expenses.title,
+                })}
+              >
                 <Pencil className="size-4" />
               </Button>
             }
@@ -120,7 +129,7 @@ export function ExpensesTable({
         data={items}
         sort={sort}
         onSortChange={handleSortChange}
-        emptyMessage="No expenses yet. Add your first expense to get started."
+        emptyMessage={dict.expenses.emptyState}
       />
       <Pagination
         page={page}

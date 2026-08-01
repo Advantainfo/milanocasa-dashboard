@@ -3,6 +3,7 @@
 import { Search } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface SearchInputProps {
   defaultValue?: string
@@ -13,10 +14,11 @@ interface SearchInputProps {
 
 export function SearchInput({
   defaultValue = "",
-  placeholder = "Search…",
+  placeholder,
   onSearch,
   debounceMs = 300,
 }: SearchInputProps) {
+  const dict = useDictionary()
   const [value, setValue] = useState(defaultValue)
   const isFirstRender = useRef(true)
 
@@ -37,7 +39,7 @@ export function SearchInput({
       <Input
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? dict.common.search}
         className="pl-9"
       />
     </div>

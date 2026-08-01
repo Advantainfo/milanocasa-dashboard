@@ -13,21 +13,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ReportType } from "@/lib/report-period"
-
-const MONTH_OPTIONS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-]
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface ReportsToolbarProps {
   type: ReportType
@@ -35,12 +21,21 @@ interface ReportsToolbarProps {
   month: number
   start: string
   end: string
+  monthLabels: readonly string[]
 }
 
-export function ReportsToolbar({ type, year, month, start, end }: ReportsToolbarProps) {
+export function ReportsToolbar({
+  type,
+  year,
+  month,
+  start,
+  end,
+  monthLabels,
+}: ReportsToolbarProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 6 }, (_, i) => currentYear - i)
 
@@ -63,9 +58,9 @@ export function ReportsToolbar({ type, year, month, start, end }: ReportsToolbar
       <div className="flex flex-wrap items-center gap-3">
         <Tabs value={type} onValueChange={(value) => pushParams({ type: value })}>
           <TabsList>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="yearly">Yearly</TabsTrigger>
-            <TabsTrigger value="custom">Custom</TabsTrigger>
+            <TabsTrigger value="monthly">{dict.reports.monthly}</TabsTrigger>
+            <TabsTrigger value="yearly">{dict.reports.yearly}</TabsTrigger>
+            <TabsTrigger value="custom">{dict.reports.custom}</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -79,7 +74,7 @@ export function ReportsToolbar({ type, year, month, start, end }: ReportsToolbar
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {MONTH_OPTIONS.map((label, index) => (
+                {monthLabels.map((label, index) => (
                   <SelectItem key={label} value={String(index + 1)}>
                     {label}
                   </SelectItem>
@@ -130,7 +125,7 @@ export function ReportsToolbar({ type, year, month, start, end }: ReportsToolbar
               onChange={(event) => pushParams({ start: event.target.value })}
               className="w-[160px]"
             />
-            <span className="text-muted-foreground text-sm">to</span>
+            <span className="text-muted-foreground text-sm">{dict.reports.to}</span>
             <Input
               type="date"
               value={end}
@@ -145,13 +140,13 @@ export function ReportsToolbar({ type, year, month, start, end }: ReportsToolbar
         <Button variant="outline" asChild>
           <a href={`/api/reports/excel?${exportQuery}`} download>
             <FileSpreadsheet className="size-4" />
-            Export Excel
+            {dict.reports.exportExcel}
           </a>
         </Button>
         <Button variant="outline" asChild>
           <a href={`/api/reports/pdf?${exportQuery}`} download>
             <FileText className="size-4" />
-            Export PDF
+            {dict.reports.exportPdf}
           </a>
         </Button>
       </div>

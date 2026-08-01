@@ -4,6 +4,7 @@ import { listExpenses, type ExpenseSortColumn } from "@/server/repositories/expe
 import { EXPENSE_CATEGORIES, type ExpenseCategory } from "@/types/database"
 import { ExpensesTable } from "@/components/expenses/expenses-table"
 import { ExpensesToolbar } from "@/components/expenses/expenses-toolbar"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
 
 export const metadata: Metadata = { title: "Expenses | Milano Casa" }
 
@@ -19,6 +20,7 @@ interface ExpensesPageProps {
 }
 
 export default async function ExpensesPage({ searchParams }: ExpensesPageProps) {
+  const { dictionary: dict } = await getServerDictionary()
   const params = await searchParams
   const search = typeof params.search === "string" ? params.search : ""
   const categoryParam = typeof params.category === "string" ? params.category : ""
@@ -44,10 +46,8 @@ export default async function ExpensesPage({ searchParams }: ExpensesPageProps) 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Expenses</h2>
-        <p className="text-muted-foreground text-sm">
-          Track materials, transport, rent, and every other business cost.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight">{dict.expenses.title}</h2>
+        <p className="text-muted-foreground text-sm">{dict.expenses.subtitle}</p>
       </div>
       <ExpensesToolbar defaultSearch={search} defaultCategory={category ?? ""} />
       <ExpensesTable

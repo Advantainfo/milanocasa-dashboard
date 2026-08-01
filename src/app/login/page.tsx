@@ -3,6 +3,7 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { decryptSession, SESSION_COOKIE_NAME } from "@/lib/auth/session"
 import { LoginForm } from "@/components/auth/login-form"
+import { LanguageSwitcher } from "@/components/layout/language-switcher"
 
 export const metadata: Metadata = { title: "Sign in | Milano Casa" }
 
@@ -31,6 +32,9 @@ export default async function LoginPage() {
           backgroundSize: "48px 48px",
         }}
       />
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <LoginForm />
     </main>
   )

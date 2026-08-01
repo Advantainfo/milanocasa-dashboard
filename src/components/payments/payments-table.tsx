@@ -8,7 +8,6 @@ import { DataTable, type SortState } from "@/components/shared/data-table"
 import { Pagination } from "@/components/shared/pagination"
 import { Button } from "@/components/ui/button"
 import { formatCurrency, formatDate } from "@/lib/format"
-import { PAYMENT_METHOD_LABELS } from "@/lib/constants"
 import type {
   PaymentListItem,
   PaymentSortColumn,
@@ -17,6 +16,8 @@ import type {
 import type { OrderOption } from "@/server/repositories/orders.repo"
 import { PaymentFormDialog } from "@/components/payments/payment-form-dialog"
 import { DeletePaymentDialog } from "@/components/payments/delete-payment-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface PaymentsTableProps {
   items: PaymentListItem[]
@@ -40,6 +41,7 @@ export function PaymentsTable({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function pushParams(next: Record<string, string | number>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -61,13 +63,13 @@ export function PaymentsTable({
   const columns: ColumnDef<PaymentListItem, unknown>[] = [
     {
       accessorKey: "paymentDate",
-      header: "Date",
+      header: dict.payments.columns.date,
       meta: { sortKey: "paymentDate" },
       cell: ({ row }) => formatDate(row.original.paymentDate),
     },
     {
       accessorKey: "orderNumber",
-      header: "Order",
+      header: dict.payments.columns.order,
       meta: { sortKey: "orderNumber" },
       cell: ({ row }) => (
         <Link
@@ -80,7 +82,7 @@ export function PaymentsTable({
     },
     {
       id: "customer",
-      header: "Customer",
+      header: dict.payments.columns.customer,
       cell: ({ row }) => (
         <Link href={`/customers/${row.original.customerId}`} className="hover:underline">
           {row.original.customerName}
@@ -89,7 +91,7 @@ export function PaymentsTable({
     },
     {
       accessorKey: "amount",
-      header: "Amount",
+      header: dict.payments.columns.amount,
       meta: {
         sortKey: "amount",
         headerClassName: "text-right",
@@ -101,13 +103,13 @@ export function PaymentsTable({
     },
     {
       accessorKey: "method",
-      header: "Method",
+      header: dict.payments.columns.method,
       meta: { sortKey: "method" },
-      cell: ({ row }) => PAYMENT_METHOD_LABELS[row.original.method],
+      cell: ({ row }) => dict.statuses.paymentMethod[row.original.method],
     },
     {
       id: "reference",
-      header: "Reference",
+      header: dict.payments.columns.reference,
       cell: ({ row }) =>
         row.original.reference || <span className="text-muted-foreground">—</span>,
     },
@@ -122,7 +124,14 @@ export function PaymentsTable({
             orders={orders}
             payment={row.original}
             trigger={
-              <Button variant="ghost" size="icon" aria-label="Edit payment">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={formatMessage(dict.common.actionOn, {
+                  action: dict.common.edit,
+                  name: row.original.orderNumber,
+                })}
+              >
                 <Pencil className="size-4" />
               </Button>
             }
@@ -144,7 +153,7 @@ export function PaymentsTable({
         data={items}
         sort={sort}
         onSortChange={handleSortChange}
-        emptyMessage="No payments recorded yet."
+        emptyMessage={dict.payments.emptyState}
       />
       <Pagination
         page={page}

@@ -10,18 +10,18 @@ import {
 } from "lucide-react"
 
 export interface NavItem {
-  label: string
+  key: "dashboard" | "customers" | "orders" | "payments" | "expenses" | "reports" | "settings"
   href: string
   icon: LucideIcon
   status: "active" | "soon"
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, status: "active" },
-  { label: "Customers", href: "/customers", icon: Users, status: "active" },
-  { label: "Orders", href: "/orders", icon: ShoppingCart, status: "active" },
-  { label: "Payments", href: "/payments", icon: Wallet, status: "active" },
-  { label: "Expenses", href: "/expenses", icon: Receipt, status: "active" },
-  { label: "Reports", href: "/reports", icon: FileBarChart, status: "active" },
-  { label: "Settings", href: "/settings", icon: Settings, status: "active" },
+  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard, status: "active" },
+  { key: "customers", href: "/customers", icon: Users, status: "active" },
+  { key: "orders", href: "/orders", icon: ShoppingCart, status: "active" },
+  { key: "payments", href: "/payments", icon: Wallet, status: "active" },
+  { key: "expenses", href: "/expenses", icon: Receipt, status: "active" },
+  { key: "reports", href: "/reports", icon: FileBarChart, status: "active" },
+  { key: "settings", href: "/settings", icon: Settings, status: "active" },
 ]

@@ -15,6 +15,8 @@ import type {
 } from "@/server/repositories/customers.repo"
 import { CustomerFormDialog } from "@/components/customers/customer-form-dialog"
 import { DeleteCustomerDialog } from "@/components/customers/delete-customer-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface CustomersTableProps {
   items: CustomerListItem[]
@@ -36,6 +38,7 @@ export function CustomersTable({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function pushParams(next: Record<string, string | number>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -57,7 +60,7 @@ export function CustomersTable({
   const columns: ColumnDef<CustomerListItem, unknown>[] = [
     {
       accessorKey: "name",
-      header: "Name",
+      header: dict.customers.columns.name,
       meta: { sortKey: "name" },
       cell: ({ row }) => (
         <div>
@@ -75,7 +78,7 @@ export function CustomersTable({
     },
     {
       id: "contact",
-      header: "Contact",
+      header: dict.customers.columns.contact,
       cell: ({ row }) => (
         <div className="text-sm">
           {row.original.email && <p>{row.original.email}</p>}
@@ -90,7 +93,7 @@ export function CustomersTable({
     },
     {
       accessorKey: "totalOrders",
-      header: "Orders",
+      header: dict.customers.columns.orders,
       meta: {
         sortKey: "totalOrders",
         headerClassName: "text-right",
@@ -100,7 +103,7 @@ export function CustomersTable({
     },
     {
       accessorKey: "totalRevenue",
-      header: "Revenue",
+      header: dict.customers.columns.revenue,
       meta: {
         sortKey: "totalRevenue",
         headerClassName: "text-right",
@@ -110,7 +113,7 @@ export function CustomersTable({
     },
     {
       accessorKey: "outstandingBalance",
-      header: "Outstanding",
+      header: dict.customers.columns.outstanding,
       meta: {
         sortKey: "outstandingBalance",
         headerClassName: "text-right",
@@ -134,7 +137,10 @@ export function CustomersTable({
           <Button variant="ghost" size="icon" asChild>
             <Link
               href={`/customers/${row.original.id}`}
-              aria-label={`View ${row.original.name}`}
+              aria-label={formatMessage(dict.common.actionOn, {
+                action: dict.common.view,
+                name: row.original.name,
+              })}
             >
               <Eye className="size-4" />
             </Link>
@@ -146,7 +152,10 @@ export function CustomersTable({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={`Edit ${row.original.name}`}
+                aria-label={formatMessage(dict.common.actionOn, {
+                  action: dict.common.edit,
+                  name: row.original.name,
+                })}
               >
                 <Pencil className="size-4" />
               </Button>
@@ -168,7 +177,7 @@ export function CustomersTable({
         data={items}
         sort={sort}
         onSortChange={handleSortChange}
-        emptyMessage="No customers yet. Add your first customer to get started."
+        emptyMessage={dict.customers.emptyState}
       />
       <Pagination
         page={page}

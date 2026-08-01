@@ -8,7 +8,6 @@ import { Plus } from "lucide-react"
 import { expenseFieldsSchema, type ExpenseFieldsInput } from "@/lib/validation/expenses"
 import { createExpenseAction, updateExpenseAction } from "@/server/actions/expenses"
 import { EXPENSE_CATEGORIES, type ExpenseCategory } from "@/types/database"
-import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -36,6 +35,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 export interface ExpenseEditableRecord {
   id: string
@@ -56,6 +56,7 @@ interface ExpenseFormDialogProps {
 export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   const form = useForm<ExpenseFieldsInput>({
     resolver: zodResolver(expenseFieldsSchema),
@@ -96,7 +97,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
         return
       }
 
-      toast.success(mode === "edit" ? "Expense updated." : "Expense added.")
+      toast.success(mode === "edit" ? dict.expenses.updated : dict.expenses.added)
       setOpen(false)
       form.reset()
     })
@@ -114,17 +115,17 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
         {trigger ?? (
           <Button>
             <Plus className="size-4" />
-            Add expense
+            {dict.expenses.addExpense}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{mode === "edit" ? "Edit expense" : "Add expense"}</DialogTitle>
+          <DialogTitle>
+            {mode === "edit" ? dict.expenses.editExpense : dict.expenses.addExpense}
+          </DialogTitle>
           <DialogDescription>
-            {mode === "edit"
-              ? "Update this expense's details."
-              : "Log a new business expense."}
+            {mode === "edit" ? dict.expenses.editDescription : dict.expenses.addDescription}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -135,7 +136,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>{dict.expenses.category}</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -145,7 +146,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
                       <SelectContent>
                         {EXPENSE_CATEGORIES.map((category) => (
                           <SelectItem key={category} value={category}>
-                            {EXPENSE_CATEGORY_LABELS[category]}
+                            {dict.statuses.expenseCategory[category]}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -159,7 +160,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
                 name="supplier"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Supplier</FormLabel>
+                    <FormLabel>{dict.expenses.supplier}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -174,7 +175,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount (€)</FormLabel>
+                    <FormLabel>{dict.expenses.amount}</FormLabel>
                     <FormControl>
                       <Input type="number" min={0} step="0.01" {...field} />
                     </FormControl>
@@ -187,7 +188,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
                 name="expenseDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel>{dict.expenses.date}</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -201,7 +202,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
               name="invoiceNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Invoice number</FormLabel>
+                  <FormLabel>{dict.expenses.invoiceNumber}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -214,7 +215,7 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>{dict.common.notes}</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -224,7 +225,11 @@ export function ExpenseFormDialog({ mode, expense, trigger }: ExpenseFormDialogP
             />
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving…" : mode === "edit" ? "Save changes" : "Add expense"}
+                {isPending
+                  ? dict.common.saving
+                  : mode === "edit"
+                    ? dict.common.saveChanges
+                    : dict.expenses.addExpense}
               </Button>
             </DialogFooter>
           </form>

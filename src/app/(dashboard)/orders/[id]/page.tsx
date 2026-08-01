@@ -4,21 +4,20 @@ import { ArrowLeft } from "lucide-react"
 import { getOrderById, getOrderPayments } from "@/server/repositories/orders.repo"
 import { listAllCustomersForSelect } from "@/server/repositories/customers.repo"
 import { formatCurrency, formatDate } from "@/lib/format"
-import {
-  ORDER_STATUS_BADGE_VARIANT,
-  ORDER_STATUS_LABELS,
-  PAYMENT_METHOD_LABELS,
-} from "@/lib/constants"
+import { ORDER_STATUS_BADGE_VARIANT } from "@/lib/constants"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { OrderFormDialog } from "@/components/orders/order-form-dialog"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
 }
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
+  const { dictionary: dict } = await getServerDictionary()
   const { id } = await params
   const order = await getOrderById(id)
 
@@ -36,7 +35,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/orders" aria-label="Back to orders">
+            <Link
+              href="/orders"
+              aria-label={formatMessage(dict.common.backTo, { page: dict.orders.title })}
+            >
               <ArrowLeft className="size-4" />
             </Link>
           </Button>
@@ -46,7 +48,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 {order.orderNumber}
               </h2>
               <StatusBadge
-                label={ORDER_STATUS_LABELS[order.status]}
+                label={dict.statuses.order[order.status]}
                 variant={ORDER_STATUS_BADGE_VARIANT[order.status]}
               />
             </div>
@@ -62,7 +64,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           mode="edit"
           customers={customers}
           order={order}
-          trigger={<Button variant="outline">Edit</Button>}
+          trigger={<Button variant="outline">{dict.common.edit}</Button>}
         />
       </div>
 
@@ -70,7 +72,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-muted-foreground text-sm font-medium">
-              Sale Price
+              {dict.orders.detail.salePrice}
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
@@ -80,7 +82,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-muted-foreground text-sm font-medium">
-              Paid
+              {dict.orders.detail.paid}
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
@@ -90,7 +92,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-muted-foreground text-sm font-medium">
-              Remaining Balance
+              {dict.orders.detail.remainingBalance}
             </CardTitle>
           </CardHeader>
           <CardContent
@@ -108,27 +110,29 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-base">Details</CardTitle>
+            <CardTitle className="text-base">{dict.orders.detail.details}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <DetailRow label="Furniture" value={order.furnitureDescription} />
-            <DetailRow label="Quantity" value={String(order.quantity)} />
+            <DetailRow label={dict.orders.detail.furniture} value={order.furnitureDescription} />
+            <DetailRow label={dict.orders.detail.quantity} value={String(order.quantity)} />
             <DetailRow
-              label="Delivery date"
+              label={dict.orders.detail.deliveryDate}
               value={order.deliveryDate ? formatDate(order.deliveryDate) : null}
             />
-            <DetailRow label="Notes" value={order.notes} />
-            <DetailRow label="Created" value={formatDate(order.createdAt)} />
+            <DetailRow label={dict.common.notes} value={order.notes} />
+            <DetailRow label={dict.orders.detail.created} value={formatDate(order.createdAt)} />
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Payments</CardTitle>
+            <CardTitle className="text-base">{dict.orders.detail.payments}</CardTitle>
           </CardHeader>
           <CardContent>
             {payments.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No payments recorded yet.</p>
+              <p className="text-muted-foreground text-sm">
+                {dict.orders.detail.noPaymentsYet}
+              </p>
             ) : (
               <div className="divide-y">
                 {payments.map((payment) => (
@@ -139,7 +143,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                     <div>
                       <p className="font-medium">{formatCurrency(payment.amount)}</p>
                       <p className="text-muted-foreground">
-                        {PAYMENT_METHOD_LABELS[payment.method]}
+                        {dict.statuses.paymentMethod[payment.method]}
                         {payment.reference ? ` · ${payment.reference}` : ""}
                       </p>
                     </div>

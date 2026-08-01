@@ -5,6 +5,7 @@ import { listOrders, type OrderSortColumn } from "@/server/repositories/orders.r
 import { ORDER_STATUSES, type OrderStatus } from "@/types/database"
 import { OrdersTable } from "@/components/orders/orders-table"
 import { OrdersToolbar } from "@/components/orders/orders-toolbar"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
 
 export const metadata: Metadata = { title: "Orders | Milano Casa" }
 
@@ -23,6 +24,7 @@ interface OrdersPageProps {
 }
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
+  const { dictionary: dict } = await getServerDictionary()
   const params = await searchParams
   const search = typeof params.search === "string" ? params.search : ""
   const statusParam = typeof params.status === "string" ? params.status : ""
@@ -44,10 +46,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Orders</h2>
-        <p className="text-muted-foreground text-sm">
-          Track every order from new to delivered and paid.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight">{dict.orders.title}</h2>
+        <p className="text-muted-foreground text-sm">{dict.orders.subtitle}</p>
       </div>
       <OrdersToolbar
         defaultSearch={search}

@@ -8,8 +8,8 @@ import { Plus } from "lucide-react"
 import { orderCreateSchema, type OrderCreateInput } from "@/lib/validation/orders"
 import { createOrderAction, updateOrderAction } from "@/server/actions/orders"
 import { ORDER_STATUSES, PAYMENT_METHODS, type OrderStatus } from "@/types/database"
-import { ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/constants"
 import type { CustomerOption } from "@/server/repositories/customers.repo"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -70,6 +70,7 @@ export function OrderFormDialog({
 }: OrderFormDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   const form = useForm<OrderCreateInput>({
     resolver: zodResolver(orderCreateSchema),
@@ -102,7 +103,7 @@ export function OrderFormDialog({
       })
       return
     }
-    toast.success(mode === "edit" ? "Order updated." : "Order created.")
+    toast.success(mode === "edit" ? dict.orders.updated : dict.orders.created)
     setOpen(false)
     form.reset()
   }
@@ -142,17 +143,15 @@ export function OrderFormDialog({
         {trigger ?? (
           <Button>
             <Plus className="size-4" />
-            Add order
+            {dict.orders.addOrder}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{mode === "edit" ? "Edit order" : "New order"}</DialogTitle>
+          <DialogTitle>{mode === "edit" ? dict.orders.editOrder : dict.orders.newOrder}</DialogTitle>
           <DialogDescription>
-            {mode === "edit"
-              ? "Update this order's details."
-              : "Create a new order for a customer."}
+            {mode === "edit" ? dict.orders.editDescription : dict.orders.addDescription}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -162,7 +161,7 @@ export function OrderFormDialog({
               name="customerId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Customer</FormLabel>
+                  <FormLabel>{dict.orders.customer}</FormLabel>
                   <FormControl>
                     <CustomerCombobox
                       customers={customers}
@@ -179,9 +178,9 @@ export function OrderFormDialog({
               name="furnitureDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Furniture</FormLabel>
+                  <FormLabel>{dict.orders.furniture}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Oak dining table, 6 chairs" {...field} />
+                    <Input placeholder={dict.orders.furniturePlaceholder} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -193,7 +192,7 @@ export function OrderFormDialog({
                 name="quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantity</FormLabel>
+                    <FormLabel>{dict.orders.quantity}</FormLabel>
                     <FormControl>
                       <Input type="number" min={1} step={1} {...field} />
                     </FormControl>
@@ -206,7 +205,7 @@ export function OrderFormDialog({
                 name="salePrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sale price (€)</FormLabel>
+                    <FormLabel>{dict.orders.salePrice}</FormLabel>
                     <FormControl>
                       <Input type="number" min={0} step="0.01" {...field} />
                     </FormControl>
@@ -219,7 +218,7 @@ export function OrderFormDialog({
                 name="deliveryDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Delivery date</FormLabel>
+                    <FormLabel>{dict.orders.deliveryDate}</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -233,7 +232,7 @@ export function OrderFormDialog({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>{dict.common.status}</FormLabel>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -243,7 +242,7 @@ export function OrderFormDialog({
                     <SelectContent>
                       {ORDER_STATUSES.map((status) => (
                         <SelectItem key={status} value={status}>
-                          {ORDER_STATUS_LABELS[status]}
+                          {dict.statuses.order[status]}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -259,7 +258,7 @@ export function OrderFormDialog({
                   name="depositAmount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Deposit (€)</FormLabel>
+                      <FormLabel>{dict.orders.deposit}</FormLabel>
                       <FormControl>
                         <Input type="number" min={0} step="0.01" {...field} />
                       </FormControl>
@@ -273,17 +272,17 @@ export function OrderFormDialog({
                     name="depositMethod"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Deposit method</FormLabel>
+                        <FormLabel>{dict.orders.depositMethod}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select method" />
+                              <SelectValue placeholder={dict.orders.selectMethod} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {PAYMENT_METHODS.map((method) => (
                               <SelectItem key={method} value={method}>
-                                {PAYMENT_METHOD_LABELS[method]}
+                                {dict.statuses.paymentMethod[method]}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -300,7 +299,7 @@ export function OrderFormDialog({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>{dict.common.notes}</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -311,10 +310,10 @@ export function OrderFormDialog({
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
                 {isPending
-                  ? "Saving…"
+                  ? dict.common.saving
                   : mode === "edit"
-                    ? "Save changes"
-                    : "Create order"}
+                    ? dict.common.saveChanges
+                    : dict.orders.createOrder}
               </Button>
             </DialogFooter>
           </form>

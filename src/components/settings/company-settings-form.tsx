@@ -34,9 +34,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import type { CompanySettings } from "@/server/repositories/settings.repo"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 export function CompanySettingsForm({ settings }: { settings: CompanySettings }) {
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   const form = useForm<CompanySettingsFieldsInput>({
     resolver: zodResolver(companySettingsSchema),
@@ -75,17 +77,15 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
         return
       }
 
-      toast.success("Company settings updated.")
+      toast.success(dict.settings.company.saved)
     })
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Company</CardTitle>
-        <CardDescription>
-          Your business details, shown across the dashboard.
-        </CardDescription>
+        <CardTitle className="text-base">{dict.settings.company.title}</CardTitle>
+        <CardDescription>{dict.settings.company.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -95,7 +95,7 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
               name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company name</FormLabel>
+                  <FormLabel>{dict.settings.company.companyName}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -108,7 +108,7 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
               name="logoUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Logo URL</FormLabel>
+                  <FormLabel>{dict.settings.company.logoUrl}</FormLabel>
                   <div className="flex items-center gap-3">
                     {logoUrl && (
                       // Arbitrary user-provided URL - next/image requires allow-listing
@@ -141,7 +141,7 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
                 name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Currency</FormLabel>
+                    <FormLabel>{dict.settings.company.currency}</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -163,7 +163,7 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
                 name="vatPercentage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>VAT %</FormLabel>
+                    <FormLabel>{dict.settings.company.vatPercentage}</FormLabel>
                     <FormControl>
                       <Input type="number" min={0} max={100} step="0.01" {...field} />
                     </FormControl>
@@ -173,7 +173,7 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
               />
             </div>
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Saving…" : "Save changes"}
+              {isPending ? dict.common.saving : dict.common.saveChanges}
             </Button>
           </form>
         </Form>

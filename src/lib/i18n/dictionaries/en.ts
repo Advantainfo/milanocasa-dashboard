@@ -12,8 +12,8 @@ export const en = {
     search: "Search",
     previous: "Previous",
     next: "Next",
-    page: "Page",
-    of: "of",
+    pageOf: "Page {page} of {total}",
+    showingRange: "{start}–{end} of {total}",
     noResults: "No results",
     signOut: "Sign out",
     all: "All",
@@ -25,6 +25,8 @@ export const en = {
     status: "Status",
     notes: "Notes",
     view: "View",
+    actionOn: "{action} {name}",
+    backTo: "Back to {page}",
   },
   nav: {
     dashboard: "Dashboard",
@@ -35,6 +37,8 @@ export const en = {
     reports: "Reports",
     settings: "Settings",
     soon: "Soon",
+    openMenu: "Open menu",
+    navigation: "Navigation",
   },
   auth: {
     signInTagline: "Sign in to manage your business.",
@@ -96,10 +100,15 @@ export const en = {
       profitDescription: "Revenue minus expenses, per month",
       cashFlowTitle: "Cash Flow",
       cashFlowDescription: "Payments received minus expenses paid, per month",
+      collectionsTitle: "Collections",
+      collectionsDescription: "Revenue collected vs. outstanding balance",
       positive: "Positive",
       negative: "Negative",
     },
     widgets: {
+      activity: "Activity",
+      collected: "Collected",
+      outstanding: "Outstanding",
       recentOrders: "Recent Orders",
       recentPayments: "Recent Payments",
       recentExpenses: "Recent Expenses",
@@ -281,6 +290,20 @@ export const en = {
     to: "to",
     exportExcel: "Export Excel",
     exportPdf: "Export PDF",
+    months: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
     summary: {
       revenue: "Revenue",
       expenses: "Expenses",
@@ -319,4 +342,12 @@ export const en = {
   },
 } as const
 
-export type Dictionary = typeof en
+type Widen<T> = T extends readonly (infer U)[]
+  ? U extends string
+    ? readonly string[]
+    : never
+  : T extends string
+    ? string
+    : { [K in keyof T]: Widen<T[K]> }
+
+export type Dictionary = Widen<typeof en>

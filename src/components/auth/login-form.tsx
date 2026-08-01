@@ -15,11 +15,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 const initialState: LoginFormState = {}
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState)
+  const dict = useDictionary()
 
   return (
     <motion.div
@@ -35,12 +37,12 @@ export function LoginForm() {
           <CardTitle className="text-2xl font-semibold tracking-tight">
             Milano Casa
           </CardTitle>
-          <CardDescription>Sign in to manage your business.</CardDescription>
+          <CardDescription>{dict.auth.signInTagline}</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={formAction} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{dict.auth.email}</Label>
               <Input
                 id="email"
                 name="email"
@@ -51,7 +53,7 @@ export function LoginForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{dict.auth.password}</Label>
               <Input
                 id="password"
                 name="password"
@@ -66,7 +68,7 @@ export function LoginForm() {
               </p>
             )}
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? <Loader2 className="size-4 animate-spin" /> : "Sign in"}
+              {isPending ? <Loader2 className="size-4 animate-spin" /> : dict.auth.signIn}
             </Button>
           </form>
         </CardContent>

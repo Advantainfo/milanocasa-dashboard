@@ -9,10 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PAYMENT_METHOD_LABELS } from "@/lib/constants"
 import { PAYMENT_METHODS } from "@/types/database"
 import type { OrderOption } from "@/server/repositories/orders.repo"
 import { PaymentFormDialog } from "@/components/payments/payment-form-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
 
 interface PaymentsToolbarProps {
   defaultSearch: string
@@ -30,6 +30,7 @@ export function PaymentsToolbar({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const dict = useDictionary()
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -47,7 +48,7 @@ export function PaymentsToolbar({
       <div className="flex flex-wrap items-center gap-3">
         <SearchInput
           defaultValue={defaultSearch}
-          placeholder="Search payments…"
+          placeholder={dict.payments.searchPlaceholder}
           onSearch={(value) => updateParam("search", value)}
         />
         <Select
@@ -55,13 +56,13 @@ export function PaymentsToolbar({
           onValueChange={(value) => updateParam("method", value)}
         >
           <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="All methods" />
+            <SelectValue placeholder={dict.payments.allMethods} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_METHODS_VALUE}>All methods</SelectItem>
+            <SelectItem value={ALL_METHODS_VALUE}>{dict.payments.allMethods}</SelectItem>
             {PAYMENT_METHODS.map((method) => (
               <SelectItem key={method} value={method}>
-                {PAYMENT_METHOD_LABELS[method]}
+                {dict.statuses.paymentMethod[method]}
               </SelectItem>
             ))}
           </SelectContent>

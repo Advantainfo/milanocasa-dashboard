@@ -16,6 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useDictionary } from "@/lib/i18n/dictionary-provider"
+import { formatMessage } from "@/lib/i18n/format-message"
 
 interface DeleteOrderDialogProps {
   orderId: string
@@ -25,11 +27,12 @@ interface DeleteOrderDialogProps {
 export function DeleteOrderDialog({ orderId, orderNumber }: DeleteOrderDialogProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dict = useDictionary()
 
   function handleDelete() {
     startTransition(async () => {
       await deleteOrderAction(orderId)
-      toast.success(`Order ${orderNumber} deleted.`)
+      toast.success(formatMessage(dict.orders.deleted, { orderNumber }))
       setOpen(false)
     })
   }
@@ -37,22 +40,28 @@ export function DeleteOrderDialog({ orderId, orderNumber }: DeleteOrderDialogPro
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={`Delete order ${orderNumber}`}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={formatMessage(dict.common.actionOn, {
+            action: dict.common.delete,
+            name: orderNumber,
+          })}
+        >
           <Trash2 className="size-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete order {orderNumber}?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This removes the order from your active list. Its payment history is kept for
-            your records.
-          </AlertDialogDescription>
+          <AlertDialogTitle>
+            {formatMessage(dict.orders.deleteTitle, { orderNumber })}
+          </AlertDialogTitle>
+          <AlertDialogDescription>{dict.orders.deleteDescription}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{dict.common.cancel}</AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete} disabled={isPending}>
-            {isPending ? "Deleting…" : "Delete"}
+            {isPending ? dict.common.deleting : dict.common.delete}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

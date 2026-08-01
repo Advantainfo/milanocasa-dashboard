@@ -1,4 +1,6 @@
+import dynamic from "next/dynamic"
 import {
+  ArrowLeftRight,
   BadgeEuro,
   Banknote,
   ShoppingCart,
@@ -19,17 +21,55 @@ import {
   getRecentPayments,
   getUpcomingDeliveries,
 } from "@/server/repositories/dashboard.repo"
-import { KpiCard } from "@/components/dashboard/kpi-card"
+import { KpiCard, type KpiTrend } from "@/components/dashboard/kpi-card"
 import { QuickActions } from "@/components/dashboard/quick-actions"
-import { RevenueExpensesChart } from "@/components/dashboard/revenue-expenses-chart"
-import { DivergingBarChart } from "@/components/dashboard/diverging-bar-chart"
-import { RecentOrdersWidget } from "@/components/dashboard/recent-orders-widget"
-import { RecentPaymentsWidget } from "@/components/dashboard/recent-payments-widget"
-import { RecentExpensesWidget } from "@/components/dashboard/recent-expenses-widget"
-import { UpcomingDeliveriesWidget } from "@/components/dashboard/upcoming-deliveries-widget"
-import { OutstandingBalancesWidget } from "@/components/dashboard/outstanding-balances-widget"
+import { ActivityPanel } from "@/components/dashboard/activity-panel"
+import { DashboardSection } from "@/components/dashboard/dashboard-section"
+import { FadeIn, StaggerGroup, StaggerItem } from "@/components/dashboard/dashboard-motion"
+import { Skeleton } from "@/components/ui/skeleton"
+import { getServerDictionary } from "@/lib/i18n/get-dictionary"
+
+function chartSkeleton(height: number) {
+  return <Skeleton className="w-full rounded-xl" style={{ height }} />
+}
+
+const RevenueExpensesChart = dynamic(
+  () =>
+    import("@/components/dashboard/revenue-expenses-chart").then(
+      (m) => m.RevenueExpensesChart
+    ),
+  { loading: () => chartSkeleton(380) }
+)
+const CashFlowChart = dynamic(
+  () => import("@/components/dashboard/cash-flow-chart").then((m) => m.CashFlowChart),
+  { loading: () => chartSkeleton(380) }
+)
+const DivergingBarChart = dynamic(
+  () =>
+    import("@/components/dashboard/diverging-bar-chart").then((m) => m.DivergingBarChart),
+  { loading: () => chartSkeleton(300) }
+)
+const DonutChart = dynamic(
+  () => import("@/components/dashboard/charts/donut-chart").then((m) => m.DonutChart),
+  { loading: () => chartSkeleton(180) }
+)
+
+function computeTrend(current: number, previous: number): KpiTrend | undefined {
+  if (previous === 0 && current === 0) return undefined
+  if (previous === 0) {
+    return { direction: current > 0 ? "up" : "down", label: current > 0 ? "+100%" : "-100%" }
+  }
+  const change = ((current - previous) / Math.abs(previous)) * 100
+  if (Math.abs(change) < 0.5) return { direction: "flat", label: "0%" }
+  const rounded = Math.round(change)
+  return {
+    direction: rounded > 0 ? "up" : "down",
+    label: `${rounded > 0 ? "+" : ""}${rounded}%`,
+  }
+}
 
 export default async function DashboardPage() {
+  const { dictionary: dict } = await getServerDictionary()
   const [
     kpis,
     monthly,
@@ -52,79 +92,167 @@ export default async function DashboardPage() {
     listOrdersForSelect(),
   ])
 
+  const lastMonth = monthly[monthly.length - 1]
+  const priorMonth = monthly[monthly.length - 2]
+
+  const profitTrend = priorMonth
+    ? computeTrend(Number(lastMonth.profit), Number(priorMonth.profit))
+    : undefined
+  const expensesTrend = priorMonth
+    ? computeTrend(Number(lastMonth.expenses), Number(priorMonth.expenses))
+    : undefined
+  const cashFlowTrend = priorMonth
+    ? computeTrend(Number(lastMonth.cashFlow), Number(priorMonth.cashFlow))
+    : undefined
+
+  const totalRevenue = Number(kpis.totalRevenue)
+  const outstanding = Number(kpis.outstandingPayments)
+  const collected = Math.max(0, totalRevenue - outstanding)
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground text-sm">Your business at a glance.</p>
-      </div>
+      <FadeIn>
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">{dict.dashboard.title}</h2>
+          <p className="text-muted-foreground text-sm">{dict.dashboard.subtitle}</p>
+        </div>
+      </FadeIn>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard
-          label="Total Revenue"
-          value={formatCurrency(kpis.totalRevenue)}
-          hint="All time"
-          icon={TrendingUp}
-        />
-        <KpiCard
-          label="Revenue This Month"
-          value={formatCurrency(kpis.revenueThisMonth)}
-          icon={BadgeEuro}
-        />
-        <KpiCard
-          label="Outstanding Payments"
-          value={formatCurrency(kpis.outstandingPayments)}
-          icon={Wallet}
-          tone={Number(kpis.outstandingPayments) > 0 ? "amber" : "default"}
-        />
-        <KpiCard
-          label="Expenses"
-          value={formatCurrency(kpis.expensesThisMonth)}
-          hint="This month"
-          icon={Banknote}
-        />
-        <KpiCard
-          label="Net Profit"
-          value={formatCurrency(kpis.netProfitThisMonth)}
-          hint="This month"
-          icon={TrendingUp}
-          tone={Number(kpis.netProfitThisMonth) < 0 ? "amber" : "default"}
-        />
-        <KpiCard label="Orders" value={String(kpis.totalOrders)} icon={ShoppingCart} />
-        <KpiCard label="Customers" value={String(kpis.totalCustomers)} icon={Users} />
-        <KpiCard
-          label="Pending Deliveries"
-          value={String(kpis.pendingDeliveries)}
-          icon={Truck}
-        />
-      </div>
-
-      <QuickActions customers={customers} orders={orders} />
-
-      <div className="space-y-4">
-        <RevenueExpensesChart data={monthly} />
-        <div className="grid gap-4 lg:grid-cols-2">
-          <DivergingBarChart
-            title="Profit"
-            description="Revenue minus expenses, per month"
-            valueLabel="profit"
-            data={monthly.map((m) => ({ monthLabel: m.monthLabel, value: m.profit }))}
+      <StaggerGroup className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.totalRevenue}
+            value={totalRevenue}
+            formatValue={formatCurrency}
+            hint={dict.dashboard.kpi.allTime}
+            icon={TrendingUp}
           />
-          <DivergingBarChart
-            title="Cash Flow"
-            description="Payments received minus expenses paid, per month"
-            valueLabel="cashFlow"
-            data={monthly.map((m) => ({ monthLabel: m.monthLabel, value: m.cashFlow }))}
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.netProfit}
+            value={Number(kpis.netProfitThisMonth)}
+            formatValue={formatCurrency}
+            hint={dict.dashboard.kpi.thisMonth}
+            icon={BadgeEuro}
+            tone={Number(kpis.netProfitThisMonth) < 0 ? "amber" : "default"}
+            trend={profitTrend}
           />
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.outstandingPayments}
+            value={outstanding}
+            formatValue={formatCurrency}
+            icon={Wallet}
+            tone={outstanding > 0 ? "amber" : "default"}
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.orders}
+            value={kpis.totalOrders}
+            icon={ShoppingCart}
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.customers}
+            value={kpis.totalCustomers}
+            icon={Users}
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.expenses}
+            value={Number(kpis.expensesThisMonth)}
+            formatValue={formatCurrency}
+            hint={dict.dashboard.kpi.thisMonth}
+            icon={Banknote}
+            trend={expensesTrend}
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.kpi.pendingDeliveries}
+            value={kpis.pendingDeliveries}
+            icon={Truck}
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <KpiCard
+            label={dict.dashboard.charts.cashFlowTitle}
+            value={Number(lastMonth.cashFlow)}
+            formatValue={formatCurrency}
+            hint={dict.dashboard.kpi.thisMonth}
+            icon={ArrowLeftRight}
+            tone={Number(lastMonth.cashFlow) < 0 ? "amber" : "default"}
+            trend={cashFlowTrend}
+          />
+        </StaggerItem>
+      </StaggerGroup>
+
+      <FadeIn delay={0.1}>
+        <QuickActions customers={customers} orders={orders} />
+      </FadeIn>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <FadeIn delay={0.05} className="lg:col-span-2">
+          <RevenueExpensesChart data={monthly} />
+        </FadeIn>
+        <div className="grid gap-4">
+          <FadeIn delay={0.1}>
+            <DashboardSection
+              title={dict.dashboard.charts.collectionsTitle}
+              description={dict.dashboard.charts.collectionsDescription}
+            >
+              <DonutChart
+                height={180}
+                centerValue={formatCurrency(totalRevenue)}
+                centerLabel={dict.dashboard.kpi.totalRevenue}
+                valueFormatter={formatCurrency}
+                data={[
+                  {
+                    key: "collected",
+                    label: dict.dashboard.widgets.collected,
+                    value: collected,
+                    color: "var(--chart-1)",
+                  },
+                  {
+                    key: "outstanding",
+                    label: dict.dashboard.widgets.outstanding,
+                    value: outstanding,
+                    color: "#f59e0b",
+                  },
+                ]}
+              />
+            </DashboardSection>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <DivergingBarChart
+              title={dict.dashboard.charts.profitTitle}
+              description={dict.dashboard.charts.profitDescription}
+              valueLabel="profit"
+              height={180}
+              data={monthly.map((m) => ({ monthLabel: m.monthLabel, value: m.profit }))}
+            />
+          </FadeIn>
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <RecentOrdersWidget orders={recentOrders} />
-        <UpcomingDeliveriesWidget deliveries={upcomingDeliveries} />
-        <RecentPaymentsWidget payments={recentPayments} />
-        <OutstandingBalancesWidget balances={outstandingBalances} />
-        <RecentExpensesWidget expenses={recentExpenses} />
+      <div className="grid gap-4 lg:grid-cols-3">
+        <FadeIn delay={0.05} className="lg:col-span-2">
+          <CashFlowChart data={monthly} />
+        </FadeIn>
+        <FadeIn delay={0.1}>
+          <ActivityPanel
+            orders={recentOrders}
+            payments={recentPayments}
+            expenses={recentExpenses}
+            deliveries={upcomingDeliveries}
+            balances={outstandingBalances}
+          />
+        </FadeIn>
       </div>
     </div>
   )
