@@ -22,3 +22,6 @@ export const EXPENSE_CATEGORIES = [
   "other",
 ] as const
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]
+
+export const ORDER_JOB_TYPES = ["personal_sale", "shared_project"] as const
+export type OrderJobType = (typeof ORDER_JOB_TYPES)[number]

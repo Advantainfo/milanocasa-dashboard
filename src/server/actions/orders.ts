@@ -10,7 +10,7 @@ import {
   updateOrderStatus,
   type OrderInput,
 } from "@/server/repositories/orders.repo"
-import { ORDER_STATUSES, type OrderStatus } from "@/types/database"
+import { ORDER_STATUSES, type OrderJobType, type OrderStatus } from "@/types/database"
 
 export interface OrderFormState {
   fieldErrors?: Record<string, string[]>
@@ -24,6 +24,9 @@ function toOrderInput(data: {
   salePrice: string
   deliveryDate: string
   status: OrderStatus
+  jobType: OrderJobType
+  materialCost: string
+  labourCost: string
   notes: string
 }): OrderInput {
   return {
@@ -33,6 +36,9 @@ function toOrderInput(data: {
     salePrice: Number(data.salePrice),
     deliveryDate: data.deliveryDate || null,
     status: data.status,
+    jobType: data.jobType,
+    materialCost: Number(data.materialCost),
+    labourCost: Number(data.labourCost),
     notes: data.notes,
   }
 }
@@ -50,6 +56,9 @@ export async function createOrderAction(
     salePrice: formData.get("salePrice"),
     deliveryDate: formData.get("deliveryDate"),
     status: formData.get("status"),
+    jobType: formData.get("jobType"),
+    materialCost: formData.get("materialCost"),
+    labourCost: formData.get("labourCost"),
     notes: formData.get("notes"),
     depositAmount: formData.get("depositAmount"),
     depositMethod: formData.get("depositMethod") || undefined,
@@ -90,6 +99,9 @@ export async function updateOrderAction(
     salePrice: formData.get("salePrice"),
     deliveryDate: formData.get("deliveryDate"),
     status: formData.get("status"),
+    jobType: formData.get("jobType"),
+    materialCost: formData.get("materialCost"),
+    labourCost: formData.get("labourCost"),
     notes: formData.get("notes"),
   })
 

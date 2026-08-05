@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { getOrderById, getOrderPayments } from "@/server/repositories/orders.repo"
 import { listAllCustomersForSelect } from "@/server/repositories/customers.repo"
 import { formatCurrency, formatDate } from "@/lib/format"
-import { ORDER_STATUS_BADGE_VARIANT } from "@/lib/constants"
+import { ORDER_JOB_TYPE_BADGE_VARIANT, ORDER_STATUS_BADGE_VARIANT } from "@/lib/constants"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/shared/status-badge"
@@ -68,7 +68,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-muted-foreground text-sm font-medium">
@@ -105,6 +105,22 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             {formatCurrency(order.remainingBalance)}
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              {dict.orders.detail.expectedProfit}
+            </CardTitle>
+          </CardHeader>
+          <CardContent
+            className={
+              Number(order.expectedProfit) < 0
+                ? "text-2xl font-semibold text-warning"
+                : "text-2xl font-semibold"
+            }
+          >
+            {formatCurrency(order.expectedProfit)}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -119,6 +135,15 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               label={dict.orders.detail.deliveryDate}
               value={order.deliveryDate ? formatDate(order.deliveryDate) : null}
             />
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">{dict.orders.jobType}</span>
+              <StatusBadge
+                label={dict.orders.jobTypeOptions[order.jobType]}
+                variant={ORDER_JOB_TYPE_BADGE_VARIANT[order.jobType]}
+              />
+            </div>
+            <DetailRow label={dict.orders.materialCost} value={formatCurrency(order.materialCost)} />
+            <DetailRow label={dict.orders.labourCost} value={formatCurrency(order.labourCost)} />
             <DetailRow label={dict.common.notes} value={order.notes} />
             <DetailRow label={dict.orders.detail.created} value={formatDate(order.createdAt)} />
           </CardContent>

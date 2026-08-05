@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { ORDER_STATUSES, PAYMENT_METHODS } from "@/types/database"
+import { ORDER_JOB_TYPES, ORDER_STATUSES, PAYMENT_METHODS } from "@/types/database"
 
 function isNonNegativeNumber(value: string) {
   return value !== "" && !Number.isNaN(Number(value)) && Number(value) >= 0
@@ -23,6 +23,13 @@ export const orderFieldsSchema = z.object({
   }),
   deliveryDate: z.string().trim(),
   status: z.enum(ORDER_STATUSES),
+  jobType: z.enum(ORDER_JOB_TYPES),
+  materialCost: z.string().trim().refine(isNonNegativeNumber, {
+    error: "Material cost must be zero or more.",
+  }),
+  labourCost: z.string().trim().refine(isNonNegativeNumber, {
+    error: "Labour cost must be zero or more.",
+  }),
   notes: z.string().trim().max(2000),
 })
 

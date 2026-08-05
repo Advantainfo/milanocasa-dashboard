@@ -2,7 +2,7 @@ import "server-only"
 
 import { randomUUID } from "node:crypto"
 import { query, queryOne, withTransaction } from "@/lib/db"
-import type { OrderStatus, PaymentMethod } from "@/types/database"
+import type { OrderJobType, OrderStatus, PaymentMethod } from "@/types/database"
 
 export type OrderSortColumn =
   | "orderNumber"
@@ -36,6 +36,10 @@ export interface OrderListItem {
   remainingBalance: string
   deliveryDate: string | null
   status: OrderStatus
+  jobType: OrderJobType
+  materialCost: string
+  labourCost: string
+  expectedProfit: string
   notes: string | null
 }
 
@@ -50,6 +54,10 @@ interface OrderListRow {
   remaining_balance: string
   delivery_date: string | null
   status: OrderStatus
+  job_type: OrderJobType
+  material_cost: string
+  labour_cost: string
+  expected_profit: string
   notes: string | null
 }
 
@@ -65,6 +73,10 @@ function toOrderListItem(row: OrderListRow): OrderListItem {
     remainingBalance: row.remaining_balance,
     deliveryDate: row.delivery_date,
     status: row.status,
+    jobType: row.job_type,
+    materialCost: row.material_cost,
+    labourCost: row.labour_cost,
+    expectedProfit: row.expected_profit,
     notes: row.notes,
   }
 }
@@ -123,7 +135,8 @@ export async function listOrders(
        o.id, o.order_number, o.customer_id, c.name AS customer_name,
        o.furniture_description, o.quantity, o.sale_price,
        COALESCE(ob.remaining_balance, o.sale_price) AS remaining_balance,
-       o.delivery_date, o.status, o.notes
+       o.delivery_date, o.status, o.job_type, o.material_cost, o.labour_cost,
+       o.expected_profit, o.notes
      FROM orders o
      JOIN customers c ON c.id = o.customer_id
      LEFT JOIN order_balances ob ON ob.order_id = o.id
@@ -151,6 +164,10 @@ export interface OrderDetail {
   remainingBalance: string
   deliveryDate: string | null
   status: OrderStatus
+  jobType: OrderJobType
+  materialCost: string
+  labourCost: string
+  expectedProfit: string
   notes: string | null
   createdAt: string
 }
@@ -168,6 +185,10 @@ export async function getOrderById(id: string): Promise<OrderDetail | null> {
     remaining_balance: string
     delivery_date: string | null
     status: OrderStatus
+    job_type: OrderJobType
+    material_cost: string
+    labour_cost: string
+    expected_profit: string
     notes: string | null
     created_at: string
   }>(
@@ -176,7 +197,8 @@ export async function getOrderById(id: string): Promise<OrderDetail | null> {
        o.furniture_description, o.quantity, o.sale_price,
        COALESCE(ob.paid_amount, 0) AS paid_amount,
        COALESCE(ob.remaining_balance, o.sale_price) AS remaining_balance,
-       o.delivery_date, o.status, o.notes, o.created_at
+       o.delivery_date, o.status, o.job_type, o.material_cost, o.labour_cost,
+       o.expected_profit, o.notes, o.created_at
      FROM orders o
      JOIN customers c ON c.id = o.customer_id
      LEFT JOIN order_balances ob ON ob.order_id = o.id
@@ -198,6 +220,10 @@ export async function getOrderById(id: string): Promise<OrderDetail | null> {
     remainingBalance: row.remaining_balance,
     deliveryDate: row.delivery_date,
     status: row.status,
+    jobType: row.job_type,
+    materialCost: row.material_cost,
+    labourCost: row.labour_cost,
+    expectedProfit: row.expected_profit,
     notes: row.notes,
     createdAt: row.created_at,
   }
@@ -242,6 +268,9 @@ export interface OrderInput {
   salePrice: number
   deliveryDate: string | null
   status: OrderStatus
+  jobType: OrderJobType
+  materialCost: number
+  labourCost: number
   notes: string
 }
 
@@ -259,8 +288,9 @@ export async function createOrder(
   await withTransaction(async (client) => {
     await client.query(
       `INSERT INTO orders
-         (id, customer_id, furniture_description, quantity, sale_price, delivery_date, status, notes)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         (id, customer_id, furniture_description, quantity, sale_price, delivery_date, status,
+          job_type, material_cost, labour_cost, notes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [
         id,
         input.customerId,
@@ -269,6 +299,9 @@ export async function createOrder(
         input.salePrice,
         input.deliveryDate,
         input.status,
+        input.jobType,
+        input.materialCost,
+        input.labourCost,
         input.notes || null,
       ]
     )
@@ -288,8 +321,9 @@ export async function updateOrder(id: string, input: OrderInput): Promise<void> 
   await query(
     `UPDATE orders
      SET customer_id = $1, furniture_description = $2, quantity = $3, sale_price = $4,
-         delivery_date = $5, status = $6, notes = $7
-     WHERE id = $8 AND deleted_at IS NULL`,
+         delivery_date = $5, status = $6, job_type = $7, material_cost = $8,
+         labour_cost = $9, notes = $10
+     WHERE id = $11 AND deleted_at IS NULL`,
     [
       input.customerId,
       input.furnitureDescription,
@@ -297,6 +331,9 @@ export async function updateOrder(id: string, input: OrderInput): Promise<void> 
       input.salePrice,
       input.deliveryDate,
       input.status,
+      input.jobType,
+      input.materialCost,
+      input.labourCost,
       input.notes || null,
       id,
     ]

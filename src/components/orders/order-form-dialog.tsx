@@ -7,7 +7,14 @@ import { toast } from "sonner"
 import { Plus } from "lucide-react"
 import { orderCreateSchema, type OrderCreateInput } from "@/lib/validation/orders"
 import { createOrderAction, updateOrderAction } from "@/server/actions/orders"
-import { ORDER_STATUSES, PAYMENT_METHODS, type OrderStatus } from "@/types/database"
+import {
+  ORDER_JOB_TYPES,
+  ORDER_STATUSES,
+  PAYMENT_METHODS,
+  type OrderJobType,
+  type OrderStatus,
+} from "@/types/database"
+import { formatCurrency } from "@/lib/format"
 import type { CustomerOption } from "@/server/repositories/customers.repo"
 import { useDictionary } from "@/lib/i18n/dictionary-provider"
 import { Button } from "@/components/ui/button"
@@ -47,6 +54,9 @@ export interface OrderEditableRecord {
   salePrice: string
   deliveryDate: string | null
   status: OrderStatus
+  jobType: OrderJobType
+  materialCost: string
+  labourCost: string
   notes: string | null
 }
 
@@ -81,6 +91,9 @@ export function OrderFormDialog({
       salePrice: order?.salePrice ?? "",
       deliveryDate: order?.deliveryDate ?? "",
       status: order?.status ?? "new",
+      jobType: order?.jobType ?? "personal_sale",
+      materialCost: order?.materialCost ?? "0",
+      labourCost: order?.labourCost ?? "0",
       notes: order?.notes ?? "",
       depositAmount: "0",
       depositMethod: undefined,
@@ -89,6 +102,12 @@ export function OrderFormDialog({
 
   const depositAmount = form.watch("depositAmount")
   const showDepositMethod = mode === "create" && Number(depositAmount) > 0
+
+  const salePrice = form.watch("salePrice")
+  const materialCost = form.watch("materialCost")
+  const labourCost = form.watch("labourCost")
+  const expectedProfitPreview =
+    (Number(salePrice) || 0) - (Number(materialCost) || 0) - (Number(labourCost) || 0)
 
   function handleResult(result: ActionResult) {
     if (result.formError) {
@@ -117,6 +136,9 @@ export function OrderFormDialog({
       formData.set("salePrice", values.salePrice)
       formData.set("deliveryDate", values.deliveryDate)
       formData.set("status", values.status)
+      formData.set("jobType", values.jobType)
+      formData.set("materialCost", values.materialCost)
+      formData.set("labourCost", values.labourCost)
       formData.set("notes", values.notes)
 
       if (mode === "create") {
@@ -251,6 +273,70 @@ export function OrderFormDialog({
                 </FormItem>
               )}
             />
+            <div className="space-y-4 rounded-lg border p-3">
+              <FormField
+                control={form.control}
+                name="jobType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dict.orders.jobType}</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {ORDER_JOB_TYPES.map((jobType) => (
+                          <SelectItem key={jobType} value={jobType}>
+                            {dict.orders.jobTypeOptions[jobType]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="materialCost"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{dict.orders.materialCost}</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={0} step="0.01" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="labourCost"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{dict.orders.labourCost}</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={0} step="0.01" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{dict.orders.expectedProfit}</span>
+                <span
+                  className={
+                    expectedProfitPreview < 0 ? "text-warning font-medium" : "font-medium"
+                  }
+                >
+                  {formatCurrency(expectedProfitPreview)}
+                </span>
+              </div>
+            </div>
             {mode === "create" && (
               <div className="grid grid-cols-1 gap-4 rounded-lg border p-3 sm:grid-cols-2">
                 <FormField

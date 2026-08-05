@@ -1,4 +1,9 @@
-import type { ExpenseCategory, OrderStatus, PaymentMethod } from "@/types/database"
+import type {
+  ExpenseCategory,
+  OrderJobType,
+  OrderStatus,
+  PaymentMethod,
+} from "@/types/database"
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   new: "New",
@@ -34,6 +39,19 @@ export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   utilities: "Utilities",
   equipment: "Equipment",
   other: "Other",
+}
+
+export const ORDER_JOB_TYPE_LABELS: Record<OrderJobType, string> = {
+  personal_sale: "Personal Sale",
+  shared_project: "Shared Project",
+}
+
+export const ORDER_JOB_TYPE_BADGE_VARIANT: Record<
+  OrderJobType,
+  "neutral" | "info" | "warning" | "success" | "positive"
+> = {
+  personal_sale: "neutral",
+  shared_project: "info",
 }
 
 export const DEFAULT_PAGE_SIZE = 20
