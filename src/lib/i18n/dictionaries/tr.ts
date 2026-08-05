@@ -195,6 +195,7 @@ export const tr: Dictionary = {
     depositMethod: "Kapora yöntemi",
     selectMethod: "Yöntem seçin",
     createOrder: "Sipariş oluştur",
+    generateCustomerPdf: "Müşteri PDF'i Oluştur",
     columns: {
       order: "Sipariş",
       customer: "Müşteri",
@@ -340,6 +341,10 @@ export const tr: Dictionary = {
       logoUrl: "Logo URL'si",
       currency: "Para birimi",
       vatPercentage: "KDV %",
+      vatNumber: "Vergi numarası",
+      address: "Adres",
+      phone: "Telefon",
+      email: "E-posta",
       saved: "Şirket ayarları güncellendi.",
     },
     security: {

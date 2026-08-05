@@ -23,6 +23,10 @@ export async function updateCompanySettingsAction(
     logoUrl: formData.get("logoUrl"),
     currency: formData.get("currency"),
     vatPercentage: formData.get("vatPercentage"),
+    vatNumber: formData.get("vatNumber"),
+    address: formData.get("address"),
+    phone: formData.get("phone"),
+    email: formData.get("email"),
   })
 
   if (!parsed.success) {
@@ -34,6 +38,10 @@ export async function updateCompanySettingsAction(
     logoUrl: parsed.data.logoUrl,
     currency: parsed.data.currency,
     vatPercentage: Number(parsed.data.vatPercentage),
+    vatNumber: parsed.data.vatNumber,
+    address: parsed.data.address,
+    phone: parsed.data.phone,
+    email: parsed.data.email,
   })
 
   revalidatePath("/settings")

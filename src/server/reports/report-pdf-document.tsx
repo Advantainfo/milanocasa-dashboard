@@ -6,19 +6,8 @@ import {
   PAYMENT_METHOD_LABELS,
 } from "@/lib/constants"
 import type { ReportData } from "@/server/repositories/reports.repo"
-
-// @react-pdf/renderer's standard-14 fonts (Helvetica, Times-Roman, Courier -
-// verified across all three) silently drop the euro glyph (U+20AC) instead
-// of erroring, so every amount would render with no currency symbol at all.
-// "EUR" avoids the missing-glyph issue entirely; the web UI and Excel export
-// keep the real € symbol since neither has this font limitation.
-function formatCurrencyForPdf(value: number | string): string {
-  const num = Number(value)
-  const sign = num < 0 ? "-" : ""
-  const [intPart, decPart] = Math.abs(num).toFixed(2).split(".")
-  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-  return `${sign}${grouped},${decPart} EUR`
-}
+import { formatCurrencyForPdf } from "@/server/pdf/format"
+import { Table } from "@/server/pdf/table"
 
 const styles = StyleSheet.create({
   page: { padding: 32, fontSize: 10, fontFamily: "Helvetica", color: "#111111" },
@@ -35,66 +24,8 @@ const styles = StyleSheet.create({
   summaryLabel: { fontSize: 8, color: "#666666", marginBottom: 4 },
   summaryValue: { fontSize: 13, fontWeight: 700 },
   sectionTitle: { fontSize: 12, fontWeight: 700, marginTop: 16, marginBottom: 8 },
-  table: { borderWidth: 1, borderColor: "#e5e5e5", borderRadius: 4 },
-  tableRow: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "#e5e5e5" },
-  tableRowLast: { flexDirection: "row" },
-  tableHeaderRow: {
-    flexDirection: "row",
-    backgroundColor: "#f5f5f5",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
-  },
-  cell: { padding: 6, fontSize: 9 },
-  cellHeader: { padding: 6, fontSize: 9, fontWeight: 700 },
   emptyText: { fontSize: 9, color: "#666666", marginBottom: 8 },
 })
-
-function Table({
-  columns,
-  rows,
-}: {
-  columns: { header: string; width: string; align?: "left" | "right" }[]
-  rows: string[][]
-}) {
-  return (
-    <View style={styles.table}>
-      <View style={styles.tableHeaderRow}>
-        {columns.map((col, index) => (
-          <Text
-            key={index}
-            style={[
-              styles.cellHeader,
-              { width: col.width, textAlign: col.align ?? "left" },
-            ]}
-          >
-            {col.header}
-          </Text>
-        ))}
-      </View>
-      {rows.map((row, rowIndex) => (
-        <View
-          key={rowIndex}
-          style={rowIndex === rows.length - 1 ? styles.tableRowLast : styles.tableRow}
-        >
-          {row.map((cell, cellIndex) => (
-            <Text
-              key={cellIndex}
-              style={[
-                styles.cell,
-                {
-                  width: columns[cellIndex].width,
-                  textAlign: columns[cellIndex].align ?? "left",
-                },
-              ]}
-            >
-              {cell}
-            </Text>
-          ))}
-        </View>
-      ))}
-    </View>
-  )
-}
 
 export function ReportPdfDocument({ data }: { data: ReportData }) {
   const { period, summary, orders, expenses, payments } = data

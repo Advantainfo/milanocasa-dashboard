@@ -195,6 +195,7 @@ export const bg: Dictionary = {
     depositMethod: "Метод на депозита",
     selectMethod: "Изберете метод",
     createOrder: "Създай поръчка",
+    generateCustomerPdf: "Генерирай PDF за клиента",
     columns: {
       order: "Поръчка",
       customer: "Клиент",
@@ -339,6 +340,10 @@ export const bg: Dictionary = {
       logoUrl: "URL на логото",
       currency: "Валута",
       vatPercentage: "ДДС %",
+      vatNumber: "ДДС номер",
+      address: "Адрес",
+      phone: "Телефон",
+      email: "Имейл",
       saved: "Настройките на фирмата са обновени.",
     },
     security: {

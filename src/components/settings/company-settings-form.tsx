@@ -47,6 +47,10 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
       logoUrl: settings.logoUrl ?? "",
       currency: settings.currency as "EUR" | "USD" | "GBP",
       vatPercentage: settings.vatPercentage,
+      vatNumber: settings.vatNumber ?? "",
+      address: settings.address ?? "",
+      phone: settings.phone ?? "",
+      email: settings.email ?? "",
     },
   })
 
@@ -59,6 +63,10 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
       formData.set("logoUrl", values.logoUrl)
       formData.set("currency", values.currency)
       formData.set("vatPercentage", values.vatPercentage)
+      formData.set("vatNumber", values.vatNumber)
+      formData.set("address", values.address)
+      formData.set("phone", values.phone)
+      formData.set("email", values.email)
 
       const result = await updateCompanySettingsAction(undefined, formData)
 
@@ -166,6 +174,60 @@ export function CompanySettingsForm({ settings }: { settings: CompanySettings })
                     <FormLabel>{dict.settings.company.vatPercentage}</FormLabel>
                     <FormControl>
                       <Input type="number" min={0} max={100} step="0.01" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="vatNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{dict.settings.company.vatNumber}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{dict.settings.company.address}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dict.settings.company.phone}</FormLabel>
+                    <FormControl>
+                      <Input type="tel" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dict.settings.company.email}</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

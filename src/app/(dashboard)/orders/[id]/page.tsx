@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, FileText } from "lucide-react"
 import { getOrderById, getOrderPayments } from "@/server/repositories/orders.repo"
 import { listAllCustomersForSelect } from "@/server/repositories/customers.repo"
 import { formatCurrency, formatDate } from "@/lib/format"
@@ -60,12 +60,20 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             </Link>
           </div>
         </div>
-        <OrderFormDialog
-          mode="edit"
-          customers={customers}
-          order={order}
-          trigger={<Button variant="outline">{dict.common.edit}</Button>}
-        />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" asChild>
+            <a href={`/api/orders/${order.id}/pdf`} download>
+              <FileText className="size-4" />
+              {dict.orders.generateCustomerPdf}
+            </a>
+          </Button>
+          <OrderFormDialog
+            mode="edit"
+            customers={customers}
+            order={order}
+            trigger={<Button variant="outline">{dict.common.edit}</Button>}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

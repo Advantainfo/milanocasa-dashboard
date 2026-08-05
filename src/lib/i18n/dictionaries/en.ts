@@ -193,6 +193,7 @@ export const en = {
     depositMethod: "Deposit method",
     selectMethod: "Select method",
     createOrder: "Create order",
+    generateCustomerPdf: "Generate Customer PDF",
     columns: {
       order: "Order",
       customer: "Customer",
@@ -337,6 +338,10 @@ export const en = {
       logoUrl: "Logo URL",
       currency: "Currency",
       vatPercentage: "VAT %",
+      vatNumber: "VAT number",
+      address: "Address",
+      phone: "Phone",
+      email: "Email",
       saved: "Company settings updated.",
     },
     security: {

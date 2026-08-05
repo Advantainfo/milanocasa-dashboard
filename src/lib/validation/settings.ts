@@ -20,6 +20,15 @@ export const companySettingsSchema = z.object({
         Number(value) <= 100,
       { error: "VAT % must be between 0 and 100." }
     ),
+  vatNumber: z.string().trim().max(50),
+  address: z.string().trim().max(300),
+  phone: z.string().trim().max(50),
+  email: z
+    .string()
+    .trim()
+    .refine((value) => value === "" || z.email().safeParse(value).success, {
+      error: "Enter a valid email address.",
+    }),
 })
 
 export type CompanySettingsFieldsInput = z.infer<typeof companySettingsSchema>

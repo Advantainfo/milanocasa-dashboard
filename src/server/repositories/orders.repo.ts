@@ -351,6 +351,83 @@ export async function softDeleteOrder(id: string): Promise<void> {
   await query("UPDATE orders SET deleted_at = now() WHERE id = $1", [id])
 }
 
+export interface OrderPdfCustomer {
+  name: string
+  company: string | null
+  address: string | null
+  phone: string | null
+  email: string | null
+}
+
+export interface OrderForPdf {
+  id: string
+  orderNumber: string
+  furnitureDescription: string
+  quantity: number
+  salePrice: string
+  deliveryDate: string | null
+  status: OrderStatus
+  notes: string | null
+  createdAt: string
+  customer: OrderPdfCustomer
+}
+
+/**
+ * Purpose-built for the customer-facing order PDF: joins in the customer's
+ * contact details but deliberately omits material_cost/labour_cost/
+ * expected_profit - internal margin data that must never reach a document
+ * sent to the customer.
+ */
+export async function getOrderForCustomerPdf(id: string): Promise<OrderForPdf | null> {
+  const row = await queryOne<{
+    id: string
+    order_number: string
+    furniture_description: string
+    quantity: number
+    sale_price: string
+    delivery_date: string | null
+    status: OrderStatus
+    notes: string | null
+    created_at: string
+    customer_name: string
+    customer_company: string | null
+    customer_address: string | null
+    customer_phone: string | null
+    customer_email: string | null
+  }>(
+    `SELECT
+       o.id, o.order_number, o.furniture_description, o.quantity, o.sale_price,
+       o.delivery_date, o.status, o.notes, o.created_at,
+       c.name AS customer_name, c.company AS customer_company,
+       c.address AS customer_address, c.phone AS customer_phone, c.email AS customer_email
+     FROM orders o
+     JOIN customers c ON c.id = o.customer_id
+     WHERE o.id = $1 AND o.deleted_at IS NULL`,
+    [id]
+  )
+
+  if (!row) return null
+
+  return {
+    id: row.id,
+    orderNumber: row.order_number,
+    furnitureDescription: row.furniture_description,
+    quantity: row.quantity,
+    salePrice: row.sale_price,
+    deliveryDate: row.delivery_date,
+    status: row.status,
+    notes: row.notes,
+    createdAt: row.created_at,
+    customer: {
+      name: row.customer_name,
+      company: row.customer_company,
+      address: row.customer_address,
+      phone: row.customer_phone,
+      email: row.customer_email,
+    },
+  }
+}
+
 export interface OrderOption {
   id: string
   orderNumber: string
